@@ -21,3 +21,13 @@ Saltwash 360 is a virtual world on a web page, built with React 360.
 Driver 360 is a virtual driving experience on a web page, built with React 360. It will help you learn The Highway Code.
 
 ![Driver360](https://rdmilligan.files.wordpress.com/2019/12/driver360_firefox_instruction.png "Driver 360")
+
+# Saltwash VR
+
+[Try Saltwash VR online](https://rdmilligan.github.io/saltwash-vr/)
+
+[Read the post](https://rdmilligan.wordpress.com/2020/05/31/bird-in-virtual-reality/)
+
+Saltwash VR is a virtual world on stereoscopic video, built with OpenGL.
+
+![SaltwashVR](https://rdmilligan.files.wordpress.com/2020/05/oculusrifts_dudenoir_part5_stillb.png "Saltwash VR")
