@@ -1,20 +1,20 @@
 <html>
 	<head>
 		<title>SaltwashVR</title>
-	</head>
-	<body>
-
+		
 		<script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
 		<script src="https://rawcdn.githack.com/elbobo/aframe-gltf-morph-component/07e9b80bd382cc1c19223468d35c453e7c76e9a2/dist/aframe-gltf-morph-component.js"></script>
+	</head>
+	<body>
 
-		<a-scene renderer="gammaOutput: true">
+		<a-scene renderer="colorManagement: true;">
 			<a-assets>
-				<a-asset-item id="dude-gltf" src="/assets/dude.gltf"></a-asset-item>
-				<a-asset-item id="worm1-gltf" src="/assets/worm1.gltf"></a-asset-item>
-				<a-asset-item id="worm2-gltf" src="/assets/worm2.gltf"></a-asset-item>
-				<a-asset-item id="worm3-gltf" src="/assets/worm3.gltf"></a-asset-item>
-				<a-asset-item id="road-gltf" src="/assets/road.gltf"></a-asset-item>
+				<a-asset-item id="dude-gltf" src="assets/dude.gltf"></a-asset-item>
+				<a-asset-item id="worm1-gltf" src="assets/worm1.gltf"></a-asset-item>
+				<a-asset-item id="worm2-gltf" src="assets/worm2.gltf"></a-asset-item>
+				<a-asset-item id="worm3-gltf" src="assets/worm3.gltf"></a-asset-item>
+				<a-asset-item id="road-gltf" src="assets/road.gltf"></a-asset-item>
 			</a-assets>
 
 			<a-entity 
