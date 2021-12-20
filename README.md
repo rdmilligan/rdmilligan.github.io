@@ -28,6 +28,6 @@ Driver 360 is a virtual driving experience on a web page, built with React 360. 
 
 [Read the post](https://rdmilligan.wordpress.com/2020/05/31/bird-in-virtual-reality/)
 
-Saltwash VR is a virtual world on stereoscopic video, built with OpenGL.
+Saltwash VR is a virtual world on stereoscopic video.
 
 ![SaltwashVR](https://rdmilligan.files.wordpress.com/2020/05/oculusrifts_dudenoir_part5_stillb.png "Saltwash VR")
