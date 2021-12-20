@@ -22,6 +22,7 @@
 			gltf-model="#dude-gltf"
 			position="0 0 -2.7"
 			scale="4 4 4"
+			shadow="receive: false"
 			animation-mixer
 			sound="src: url(assets/dude.mp3);"></a-entity>
 
@@ -31,8 +32,9 @@
 			position="0 0 -6.7"
 			rotation="0 -90 0"
 			scale="2 2 2"
+			shadow="receive: false"
 			gltf-morph__squash="morphtarget:Squash;"
-			animation="property:gltf-morph__squash.value; from:0; to:1; loop: true; dir: alternate;"></a-entity>
+			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate;"></a-entity>
 
 			<a-entity 
 			id="worm2"
@@ -40,8 +42,9 @@
 			position="-1 0 -8.7"
 			rotation="0 -90 0"
 			scale="2 2 2"
+			shadow="receive: false"
 			gltf-morph__squash="morphtarget:Squash;"
-			animation="property:gltf-morph__squash.value; from:0; to:1; loop: true; dir: alternate; delay: 200"></a-entity>
+			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; delay: 200"></a-entity>
 
 			<a-entity 
 			id="worm3"
@@ -49,23 +52,28 @@
 			position="1 0 -12.7"
 			rotation="0 -90 0"
 			scale="2 2 2"
+			shadow="receive: false"
 			gltf-morph__squash="morphtarget:Squash;"
-			animation="property:gltf-morph__squash.value; from:0; to:1; loop: true; dir: alternate; delay: 400"></a-entity>
+			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; delay: 400"></a-entity>
 
 			<a-entity 
 			id="road"
 			gltf-model="#road-gltf"
 			position="0 0 -2.7"
 			scale="2 2 2"
+			shadow="cast: false"
 			animation="property: position; from: 0 0 0; to: 0 0 -800; dur: 35000;"></a-entity>
 
 			<a-entity 
-			id="punkish"
-			sound="src: url(assets/punkish.mp3); autoplay: true; positional: false; volume: 0.8;"></a-entity>
+			id="horseshit"
+			sound="src: url(assets/horseshit.mp3); autoplay: true; positional: false; volume: 0.8;"></a-entity>
 
 			<a-entity id="rig" position="-2 1.6 0" rotation="0 -50 0">
 				<a-entity id="camera" camera look-controls></a-entity>
 			</a-entity>
+
+			<a-entity light="type: ambient; intensity: 0.5;"></a-entity>
+			<a-entity light="type: directional; castShadow: true; intensity: 0.4;" position="-2.6 2 6"></a-entity>
 
 			<a-sky color="#19ABE5"></a-sky>
 		</a-scene>
@@ -75,7 +83,7 @@
 			// enter vr
 			document.querySelector('a-scene').addEventListener('enter-vr', function () {
 				const rig = document.querySelector('#rig');
-				rig.object3D.position.set(-2, 0.6, 1.5);
+				rig.object3D.position.set(-2, 0.6, 0);
 			});
 
 			// exit vr
@@ -105,8 +113,8 @@
 				const worm3 = document.querySelector('#worm3');
 				worm3.parentNode.removeChild(worm3);
 
-				const punkish = document.querySelector('#punkish');
-				punkish.parentNode.removeChild(punkish);
+				const horseshit = document.querySelector('#horseshit');
+				horseshit.parentNode.removeChild(horseshit);
 			});
 
 		</script>
