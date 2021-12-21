@@ -68,8 +68,8 @@
 			id="track"
 			sound="src: url(assets/track.mp3); autoplay: true; positional: false; volume: 0.8;"></a-entity>
 
-			<a-entity id="rig" position="-2 1.6 0" rotation="0 -55 0">
-				<a-entity id="camera" camera look-controls></a-entity>
+			<a-entity id="rig" position="-2 0 0" rotation="0 -55 0">
+				<a-entity id="camera" camera look-controls position="0 1.6 0"></a-entity>
 			</a-entity>
 
 			<a-entity light="type: ambient; intensity: 0.5;"></a-entity>
@@ -79,18 +79,6 @@
 		</a-scene>
 
 		<script>
-
-			// enter vr
-			document.querySelector('a-scene').addEventListener('enter-vr', function () {
-				const rig = document.querySelector('#rig');
-				rig.object3D.position.set(-2, 0, 0);
-			});
-
-			// exit vr
-			document.querySelector('a-scene').addEventListener('exit-vr', function () {
-				const rig = document.querySelector('#rig');
-				rig.object3D.position.set(-2, 1.6, 0);
-			});
 
 			// add sound
 			setTimeout(
