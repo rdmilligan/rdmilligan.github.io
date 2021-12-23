@@ -1,0 +1,104 @@
+<html>
+	<head>
+		<title>SaltwashVR</title>
+		
+		<script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+		<script src="https://rawcdn.githack.com/elbobo/aframe-gltf-morph-component/07e9b80bd382cc1c19223468d35c453e7c76e9a2/dist/aframe-gltf-morph-component.js"></script>
+	</head>
+	<body>
+
+		<a-scene renderer="colorManagement: true;">
+			<a-assets>
+				<a-asset-item id="dudebody-gltf" src="assets/lii_dudebody.gltf"></a-asset-item>
+				<a-asset-item id="dudehead-gltf" src="assets/lii_dudehead.gltf"></a-asset-item>
+				<a-asset-item id="dudehat-gltf" src="assets/lii_dudehat.gltf"></a-asset-item>
+				<a-asset-item id="worm-gltf" src="assets/lii_worm.gltf"></a-asset-item>
+				<a-asset-item id="scene-gltf" src="assets/lii_scene.gltf"></a-asset-item>
+			</a-assets>
+			
+			<a-entity
+			id="dudebody"
+			gltf-model="#dudebody-gltf"
+			position="-0.1 51.3 0.7"
+			rotation="0 -45 0"
+			scale="2.9 2.9 2.9"
+			animation-mixer></a-entity>
+
+			<a-entity 
+			id="dudehead"
+			gltf-model="#dudehead-gltf"
+			position="-0.1 52.715 0.7"
+			rotation="0 -45 0"
+			gltf-morph__squash="morphtarget:Squash;"
+			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400;"
+			sound="src: url(assets/lii_dude.mp3);"></a-entity>
+
+			<a-entity
+			id="dudehat"
+			gltf-model="#dudehat-gltf"
+			position="-0.1 52.86 0.7"
+			rotation="0 -45 0"></a-entity>
+
+			<a-entity 
+			id="worm"
+			gltf-model="#worm-gltf"
+			position="-0.2 51.3 -2"
+			rotation="0 -90 0"
+			scale="1.5 1.5 1.5"
+			gltf-morph__squash="morphtarget:Squash;"
+			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate;"></a-entity>
+
+			<a-entity
+			id="scene"
+			gltf-model="#scene-gltf"
+			scale="2 2 2"></a-entity>
+
+			<a-entity 
+			id="track"
+			sound="src: url(assets/lii_track.mp3); autoplay: true; positional: false; volume: 0.4;"></a-entity>
+
+			<a-entity
+			id="rig"
+			rotation="0 -55 0"
+			animation="property: position; from: -22 30 30; to: -2.4 51.3 2; dur: 10000;">
+				<a-entity id="camera" camera look-controls position="0 1.6 0"></a-entity>
+			</a-entity>
+
+			<a-entity light="type: ambient; intensity: 0.5;"></a-entity>
+			<a-entity light="type: directional; castShadow: true; intensity: 0.4;" position="-2.6 2 6"></a-entity>
+
+			<a-sky color="#19ABE5"></a-sky>
+		</a-scene>
+
+		<script>
+			// play speech
+			setTimeout(
+				function() {
+					const dudehead = document.querySelector('#dudehead');
+					dudehead.components.sound.playSound();
+			}, 9500);
+
+			// speech ended
+			document.querySelector('#dudehead').addEventListener('sound-ended', function () {
+				this.setAttribute('animation', 'enabled: false;');
+			});
+
+			// track ended
+			document.querySelector('#track').addEventListener('sound-ended', function () {
+				const dudebody = document.querySelector('#dudebody');
+				dudebody.parentNode.removeChild(dudebody);
+
+				const dudehead = document.querySelector('#dudehead');
+				dudehead.parentNode.removeChild(dudehead);
+
+				const dudehat = document.querySelector('#dudehat');
+				dudehat.parentNode.removeChild(dudehat);
+
+				const worm = document.querySelector('#worm');
+				worm.parentNode.removeChild(worm);
+			});
+		</script>
+
+	</body>
+</html>
