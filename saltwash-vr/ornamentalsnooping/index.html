@@ -1,0 +1,109 @@
+<html>
+	<head>
+		<title>SaltwashVR</title>
+		
+		<script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+		<script src="https://rawcdn.githack.com/elbobo/aframe-gltf-morph-component/07e9b80bd382cc1c19223468d35c453e7c76e9a2/dist/aframe-gltf-morph-component.js"></script>
+	</head>
+	<body>
+
+		<a-scene renderer="colorManagement: true;">
+			<a-assets>
+				<a-asset-item id="dudebody-gltf" src="assets/os_dudebody.gltf"></a-asset-item>
+				<a-asset-item id="dudehead-gltf" src="assets/os_dudehead.gltf"></a-asset-item>
+				<a-asset-item id="dudehat-gltf" src="assets/os_dudehat.gltf"></a-asset-item>
+				<a-asset-item id="bird-gltf" src="assets/os_bird.gltf"></a-asset-item>
+				<a-asset-item id="scene-gltf" src="assets/os_scene.gltf"></a-asset-item>
+			</a-assets>
+			
+			<a-entity
+			id="dudebody"
+			gltf-model="#dudebody-gltf"
+			position="0.02 10 -0.5"
+			scale="2.9 2.9 2.9"
+			animation-mixer></a-entity>
+
+			<a-entity 
+			id="dudehead"
+			gltf-model="#dudehead-gltf"
+			position="0 11.415 -0.5"
+			gltf-morph__squash="morphtarget:Squash;"
+			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400; enabled: false;"></a-entity>
+
+			<a-entity id="dudespeech1" position="0 11.415 -0.5" sound="src: url(assets/os_dude1.mp3); volume: 1.0;"></a-entity>
+			<a-entity id="dudespeech2" position="0 11.415 -0.5" sound="src: url(assets/os_dude2.mp3); volume: 1.0;"></a-entity>
+
+			<a-entity
+			id="dudehat"
+			gltf-model="#dudehat-gltf"
+			position="0 11.56 -0.5"></a-entity>
+
+			<a-entity
+			id="bird"
+			gltf-model="#bird-gltf"
+			position="0 9.5 -0.6"
+			scale="3 3 3"
+			animation-mixer></a-entity>
+
+			<a-entity
+			id="scene"
+			gltf-model="#scene-gltf"></a-entity>
+
+			<a-entity 
+			id="track"
+			sound="src: url(assets/os_track.mp3); autoplay: true; positional: false; volume: 0.4;"></a-entity>
+
+			<a-entity id="rig" 
+			animation="property: position; from: 0 10 1; to: 0 10 7; dur: 30000;">
+				<a-entity id="camera" camera look-controls position="0 1.6 0"></a-entity>
+			</a-entity>
+
+			<a-entity light="type: ambient; intensity: 0.5;"></a-entity>
+			<a-entity light="type: directional; intensity: 0.6;" position="-2.6 2 2"></a-entity>
+
+			<a-sky color="#19ABE5"></a-sky>
+		</a-scene>
+
+		<script>
+			// play speech
+			function setSpeech(speechSelector, headSelector, timeout) {
+				const speechEntity = document.querySelector(speechSelector);
+				const headEntity = document.querySelector(headSelector);
+
+				setTimeout(function() {
+					speechEntity.components.sound.playSound();
+					headEntity.setAttribute('animation', 'enabled: true;');
+
+					speechEntity.addEventListener('sound-ended', function () {
+						headEntity.setAttribute('animation', 'enabled: false;');
+					});
+				}, timeout);
+			}
+
+			setSpeech('#dudespeech1', '#dudehead', 3000);
+			setSpeech('#dudespeech2', '#dudehead', 14000);
+
+			// camera animation completed
+			rig.addEventListener('animationcomplete', function(){
+				this.setAttribute('animation', 'property: position; from: 0 10 7; to: 0 5 -7; dur: 6000;');
+			});
+
+			// track ended
+			document.querySelector('#track').addEventListener('sound-ended', function () {
+				const dudebody = document.querySelector('#dudebody');
+				dudebody.parentNode.removeChild(dudebody);
+
+				const dudehead = document.querySelector('#dudehead');
+				dudehead.parentNode.removeChild(dudehead);
+
+				const dudehat = document.querySelector('#dudehat');
+				dudehat.parentNode.removeChild(dudehat);
+
+				const bird = document.querySelector('#bird');
+				bird.parentNode.removeChild(bird);
+			});
+		</script>
+
+	</body>
+</html>
