@@ -23,8 +23,9 @@
 			position="0 0 -2.7"
 			scale="2.9 2.9 2.9"
 			shadow="receive: false"
-			animation-mixer
-			sound="src: url(assets/kw_dude.mp3);"></a-entity>
+			animation-mixer></a-entity>
+
+			<a-entity id="dudespeech" position="0 1.415 -2.7" sound="src: url(assets/kw_dude.mp3);"></a-entity>
 
 			<a-entity 
 			id="worm1"
@@ -81,8 +82,8 @@
 			// play speech
 			setTimeout(
 				function() {
-					const dude = document.querySelector('#dude');
-					dude.components.sound.playSound();
+					const dudespeech = document.querySelector('#dudespeech');
+					dudespeech.components.sound.playSound();
 			}, 10000);
 
 			// scene animation completed
