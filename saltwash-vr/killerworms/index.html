@@ -8,27 +8,73 @@
 	</head>
 	<body>
 
+		<script>
+			// orchestrate sound
+			AFRAME.registerComponent('sound-orchestrator', {
+				schema: {
+					delay: {type: 'number'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+
+					setTimeout(function() {
+						el.components.sound.playSound();
+					}, data.delay);
+				}
+			});
+
+			// clear scene
+			AFRAME.registerComponent('scene-clearer', {
+				schema: {
+					event: {type: 'string'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const sceneEl = this.el.sceneEl;
+
+					if (data.event) {
+						el.addEventListener(data.event, function() {
+							const els = sceneEl.querySelectorAll('.clear');
+							for (let i = 0; i < els.length; i++) {
+								sceneEl.removeChild(els[i]);
+							}
+						});
+					}
+				}
+			});
+		</script>
+
 		<a-scene renderer="colorManagement: true;">
 			<a-assets>
 				<a-asset-item id="dude-gltf" src="assets/kw_dude.gltf"></a-asset-item>
 				<a-asset-item id="worm1-gltf" src="assets/kw_worm1.gltf"></a-asset-item>
 				<a-asset-item id="worm2-gltf" src="assets/kw_worm2.gltf"></a-asset-item>
 				<a-asset-item id="worm3-gltf" src="assets/kw_worm3.gltf"></a-asset-item>
-				<a-asset-item id="scene-gltf" src="assets/kw_scene.gltf"></a-asset-item>
+				<a-asset-item id="stage-gltf" src="assets/kw_stage.gltf"></a-asset-item>
 			</a-assets>
 
 			<a-entity 
 			id="dude"
+			class="clear"
 			gltf-model="#dude-gltf"
 			position="0 0 -2.7"
 			scale="2.9 2.9 2.9"
 			shadow="receive: false"
 			animation-mixer></a-entity>
 
-			<a-entity id="dudespeech" position="0 1.415 -2.7" sound="src: url(assets/kw_dude.mp3);"></a-entity>
+			<a-entity 
+			id="dudespeech" 
+			position="0 1.415 -2.7" 
+			sound="src: url(assets/kw_dude.mp3);" 
+			sound-orchestrator="delay: 10000;"></a-entity>
 
 			<a-entity 
 			id="worm1"
+			class="clear"
 			gltf-model="#worm1-gltf"
 			position="0 0 -6.7"
 			rotation="0 -90 0"
@@ -39,6 +85,7 @@
 
 			<a-entity 
 			id="worm2"
+			class="clear"
 			gltf-model="#worm2-gltf"
 			position="-1 0 -8.7"
 			rotation="0 -90 0"
@@ -49,6 +96,7 @@
 
 			<a-entity 
 			id="worm3"
+			class="clear"
 			gltf-model="#worm3-gltf"
 			position="1 0 -12.7"
 			rotation="0 -90 0"
@@ -58,14 +106,16 @@
 			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; delay: 400;"></a-entity>
 
 			<a-entity 
-			id="scene"
-			gltf-model="#scene-gltf"
+			id="stage"
+			gltf-model="#stage-gltf"
 			scale="2 2 2"
 			shadow="cast: false"
-			animation="property: position; from: 0 0 0; to: 0 0 -800; dur: 35000;"></a-entity>
+			animation="property: position; from: 0 0 0; to: 0 0 -800; dur: 35000;"
+			scene-clearer="event: animationcomplete;"></a-entity>
 
 			<a-entity 
 			id="track"
+			class="clear"
 			sound="src: url(assets/kw_track.mp3); autoplay: true; positional: false; volume: 0.8;"></a-entity>
 
 			<a-entity id="rig" position="-2 0 0" rotation="0 -55 0">
@@ -77,33 +127,6 @@
 
 			<a-sky color="#19ABE5"></a-sky>
 		</a-scene>
-
-		<script>
-			// play speech
-			setTimeout(
-				function() {
-					const dudespeech = document.querySelector('#dudespeech');
-					dudespeech.components.sound.playSound();
-			}, 10000);
-
-			// scene animation completed
-			scene.addEventListener('animationcomplete', function(){
-				const dude = document.querySelector('#dude');
-				dude.parentNode.removeChild(dude);
-
-				const worm1 = document.querySelector('#worm1');
-				worm1.parentNode.removeChild(worm1);
-
-				const worm2 = document.querySelector('#worm2');
-				worm2.parentNode.removeChild(worm2);
-
-				const worm3 = document.querySelector('#worm3');
-				worm3.parentNode.removeChild(worm3);
-
-				const track = document.querySelector('#track');
-				track.parentNode.removeChild(track);
-			});
-		</script>
 
 	</body>
 </html>

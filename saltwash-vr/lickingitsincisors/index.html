@@ -8,17 +8,64 @@
 	</head>
 	<body>
 
+		<script>
+			// orchestrate speech
+			AFRAME.registerComponent('speech-orchestrator', {
+				schema: {
+					delay: {type: 'number'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const elSpeech = document.querySelector('.speech');
+
+					setTimeout(function() {
+						el.components.sound.playSound();
+						elSpeech.setAttribute('animation', {enabled: true});
+
+						el.addEventListener('sound-ended', function () {
+							elSpeech.setAttribute('animation', {enabled: false});
+						});
+					}, data.delay);
+				}
+			});
+
+			// clear scene
+			AFRAME.registerComponent('scene-clearer', {
+				schema: {
+					event: {type: 'string'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const sceneEl = this.el.sceneEl;
+
+					if (data.event) {
+						el.addEventListener(data.event, function() {
+							const els = sceneEl.querySelectorAll('.clear');
+							for (let i = 0; i < els.length; i++) {
+								sceneEl.removeChild(els[i]);
+							}
+						});
+					}
+				}
+			});
+		</script>
+
 		<a-scene renderer="colorManagement: true;">
 			<a-assets>
 				<a-asset-item id="dudebody-gltf" src="assets/lii_dudebody.gltf"></a-asset-item>
 				<a-asset-item id="dudehead-gltf" src="assets/lii_dudehead.gltf"></a-asset-item>
 				<a-asset-item id="dudehat-gltf" src="assets/lii_dudehat.gltf"></a-asset-item>
 				<a-asset-item id="worm-gltf" src="assets/lii_worm.gltf"></a-asset-item>
-				<a-asset-item id="scene-gltf" src="assets/lii_scene.gltf"></a-asset-item>
+				<a-asset-item id="stage-gltf" src="assets/lii_stage.gltf"></a-asset-item>
 			</a-assets>
 			
 			<a-entity
 			id="dudebody"
+			class="clear"
 			gltf-model="#dudebody-gltf"
 			position="-0.1 51.3 0.7"
 			rotation="0 -45 0"
@@ -27,21 +74,29 @@
 
 			<a-entity 
 			id="dudehead"
+			class="speech clear"
 			gltf-model="#dudehead-gltf"
 			position="-0.1 52.715 0.7"
 			rotation="0 -45 0"
 			gltf-morph__squash="morphtarget:Squash;"
-			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400;"
-			sound="src: url(assets/lii_dude.mp3);"></a-entity>
+			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400; enabled: false;"></a-entity>
+
+			<a-entity 
+			id="dudespeech" 
+			position="-0.1 52.715 0.7" 
+			sound="src: url(assets/lii_dude.mp3);"
+			speech-orchestrator="delay: 9500"></a-entity>
 
 			<a-entity
 			id="dudehat"
+			class="clear"
 			gltf-model="#dudehat-gltf"
 			position="-0.1 52.86 0.7"
 			rotation="0 -45 0"></a-entity>
 
 			<a-entity 
 			id="worm"
+			class="clear"
 			gltf-model="#worm-gltf"
 			position="-0.2 51.3 -2"
 			rotation="0 -90 0"
@@ -50,13 +105,14 @@
 			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate;"></a-entity>
 
 			<a-entity
-			id="scene"
-			gltf-model="#scene-gltf"
+			id="stage"
+			gltf-model="#stage-gltf"
 			scale="2 2 2"></a-entity>
 
 			<a-entity 
 			id="track"
-			sound="src: url(assets/lii_track.mp3); autoplay: true; positional: false; volume: 0.4;"></a-entity>
+			sound="src: url(assets/lii_track.mp3); autoplay: true; positional: false; volume: 0.4;"
+			scene-clearer="event: sound-ended;"></a-entity>
 
 			<a-entity
 			id="rig"
@@ -70,35 +126,6 @@
 
 			<a-sky color="#19ABE5"></a-sky>
 		</a-scene>
-
-		<script>
-			// play speech
-			setTimeout(
-				function() {
-					const dudehead = document.querySelector('#dudehead');
-					dudehead.components.sound.playSound();
-			}, 9500);
-
-			// speech ended
-			document.querySelector('#dudehead').addEventListener('sound-ended', function () {
-				this.setAttribute('animation', 'enabled: false;');
-			});
-
-			// track ended
-			document.querySelector('#track').addEventListener('sound-ended', function () {
-				const dudebody = document.querySelector('#dudebody');
-				dudebody.parentNode.removeChild(dudebody);
-
-				const dudehead = document.querySelector('#dudehead');
-				dudehead.parentNode.removeChild(dudehead);
-
-				const dudehat = document.querySelector('#dudehat');
-				dudehat.parentNode.removeChild(dudehat);
-
-				const worm = document.querySelector('#worm');
-				worm.parentNode.removeChild(worm);
-			});
-		</script>
 
 	</body>
 </html>
