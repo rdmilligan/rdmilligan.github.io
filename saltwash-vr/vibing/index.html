@@ -87,7 +87,7 @@
 			id="dudespeech" 
 			position="0 1.415 0" 
 			sound="src: url(assets/v_dude.mp3);"
-			speech-orchestrator="delay: 2580;"></a-entity>
+			speech-orchestrator="delay: 3000;"></a-entity>
 
 			<a-entity
 			id="dudehat"
@@ -100,24 +100,24 @@
 			id="worm1"
 			class="clear"
 			gltf-model="#worm1-gltf"
-			position="-2.5 0 -2"
+			position="-2 0 -2"
 			rotation="0 40 0"
-			scale="1.8 1.8 1.8"
+			scale="1.4 1.4 1.4"
 			shadow="receive: false"
 			gltf-morph__squash="morphtarget:Squash;"
-			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate;"
+			animation="property: gltf-morph__squash.value; from: 0.5; to: 0.7; loop: true; dir: alternate; dur: 1200;"
 			animation-mixer></a-entity>
 
 			<a-entity 
 			id="worm2"
 			class="clear"
 			gltf-model="#worm2-gltf"
-			position="4 0 -6"
+			position="4 0 -4"
 			rotation="0 -40 0"
-			scale="2 2 2"
+			scale="1.6 1.6 1.6"
 			shadow="receive: false"
 			gltf-morph__squash="morphtarget:Squash;"
-			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate;"
+			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 1800;"
 			animation-mixer></a-entity>
 
 			<a-entity
@@ -145,7 +145,7 @@
 			</a-entity>
 
 			<a-entity light="type: ambient; intensity: 0.5;"></a-entity>
-			<a-entity light="type: directional; castShadow: true; intensity: 0.6;" position="-2.6 2 6"></a-entity>
+			<a-entity light="type: directional; castShadow: true; intensity: 0.6;" position="-3 2 4"></a-entity>
 
 			<a-sky color="#FF0000"></a-sky>
 		</a-scene>
