@@ -31,22 +31,6 @@
 				}
 			});
 
-			// orchestrate sound
-			AFRAME.registerComponent('sound-orchestrator', {
-				schema: {
-					delay: {type: 'number'}
-				},
-
-				init: function () {
-					const data = this.data;
-					const el = this.el;
-
-					setTimeout(function() {
-						el.components.sound.playSound();
-					}, data.delay);
-				}
-			});
-
 			// clear scene
 			AFRAME.registerComponent('scene-clearer', {
 				schema: {
@@ -72,20 +56,19 @@
 
 		<a-scene renderer="colorManagement: true;">
 			<a-assets>
-				<a-asset-item id="dudebody-gltf" src="assets/tbtr_dudebody.gltf"></a-asset-item>
-				<a-asset-item id="dudehead-gltf" src="assets/tbtr_dudehead.gltf"></a-asset-item>
-				<a-asset-item id="puffer-gltf" src="assets/tbtr_puffer.gltf"></a-asset-item>
-				<a-asset-item id="crab-gltf" src="assets/tbtr_crab.gltf"></a-asset-item>
-				<a-asset-item id="squid-gltf" src="assets/tbtr_squid.gltf"></a-asset-item>
-				<a-asset-item id="reefs-gltf" src="assets/tbtr_reefs.gltf"></a-asset-item>
-				<a-asset-item id="stage-gltf" src="assets/tbtr_stage.gltf"></a-asset-item>
+				<a-asset-item id="dudebody-gltf" src="assets/bsl_dudebody.gltf"></a-asset-item>
+				<a-asset-item id="dudehead-gltf" src="assets/bsl_dudehead.gltf"></a-asset-item>
+				<a-asset-item id="dudehat-gltf" src="assets/bsl_dudehat.gltf"></a-asset-item>
+				<a-asset-item id="vase-gltf" src="assets/bsl_vase.gltf"></a-asset-item>
+				<a-asset-item id="motorbike-gltf" src="assets/bsl_motorbike.gltf"></a-asset-item>
+				<a-asset-item id="stage-gltf" src="assets/bsl_stage.gltf"></a-asset-item>
 			</a-assets>
 
 			<a-entity
 			id="dudebody"
 			class="clear"
 			gltf-model="#dudebody-gltf"
-			position="0.02 0.6 0"
+			position="-0.98 0 0"
 			scale="2.9 2.9 2.9"
 			shadow="receive: false"
 			animation-mixer></a-entity>
@@ -94,85 +77,63 @@
 			id="dudehead"
 			class="speech clear"
 			gltf-model="#dudehead-gltf"
-			position="0 2.015 0"
+			position="-1 1.415 0"
 			shadow="receive: false"
 			gltf-morph__squash="morphtarget:Squash;"
-			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400; enabled: false;"></a-entity>
+			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 370; enabled: false;"></a-entity>
 
 			<a-entity 
-			id="dudespeech" 
-			position="0 2.015 0" 
-			sound="src: url(assets/tbtr_dude.mp3);"
-			speech-orchestrator="delay: 8150;"></a-entity>
+			id="dudespeech1" 
+			position="-1 1.415 0" 
+			sound="src: url(assets/bsl_dude1.mp3);"
+			speech-orchestrator="delay: 5400;"></a-entity>
 
 			<a-entity 
-			id="puffer"
-			class="clear"
-			gltf-model="#puffer-gltf"
-			position="-2.3 1.5 -2"
-			shadow="receive: false"
-			gltf-morph__squash="morphtarget:Squash;"
-			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 1500;"></a-entity>
-
-			<a-entity 
-			id="puffersound" 
-			position="-2.3 1.5 -2" 
-			sound="src: url(assets/tbtr_puffer.mp3); volume: 0.8;"
-			sound-orchestrator="delay: 4000;"></a-entity>
-
-			<a-entity 
-			id="crab"
-			class="clear"
-			gltf-model="#crab-gltf"
-			position="-1 0.7 0"
-			shadow="receive: false"
-			animation-mixer></a-entity>
-
-			<a-entity 
-			id="crabsound" 
-			position="-1 0.7 0" 
-			sound="src: url(assets/tbtr_crab.mp3); volume: 0.8;"
-			sound-orchestrator="delay: 6000;"></a-entity>
-
-			<a-entity 
-			id="squid"
-			class="clear"
-			gltf-model="#squid-gltf"
-			position="2 1.5 -2"
-			shadow="receive: false"
-			animation-mixer></a-entity>
-
-			<a-entity 
-			id="squidsound" 
-			position="2 1.5 -2" 
-			sound="src: url(assets/tbtr_squid.mp3); volume: 0.8;"
-			sound-orchestrator="delay: 5000;"></a-entity>
+			id="dudespeech2" 
+			position="-1 1.415 0" 
+			sound="src: url(assets/bsl_dude2.mp3);"
+			speech-orchestrator="delay: 59000;"></a-entity>
 
 			<a-entity
-			id="reefs"
+			id="dudehat"
 			class="clear"
-			gltf-model="#reefs-gltf"
+			gltf-model="#dudehat-gltf"
+			position="-1 1.56 0"
+			shadow="receive: false"></a-entity>
+
+			<a-entity
+			id="vase"
+			class="clear"
+			gltf-model="#vase-gltf"
+			position="0.05 0 0.2"
+			shadow="receive: false"></a-entity>
+
+			<a-entity 
+			id="motorbike"
+			class="clear"
+			gltf-model="#motorbike-gltf"
+			position="1 0 0"
+			rotation="0 -70 0"
 			shadow="receive: false"></a-entity>
 
 			<a-entity
 			id="stage"
 			gltf-model="#stage-gltf"
-			shadow="cast: false"
-			animation="property: rotation; from: 0 0 0; to: 0 360 0; dur: 37000;"></a-entity>
+			shadow="cast: false"></a-entity>
 
 			<a-entity 
 			id="track"
-			sound="src: url(assets/tbtr_track.mp3); autoplay: true; positional: false; volume: 0.4;"
+			sound="src: url(assets/bsl_track.mp3); autoplay: true; positional: false; volume: 0.4;"
 			scene-clearer="event: sound-ended;"></a-entity>
 
-			<a-entity id="rig" position="0 0 1.6">
+			<a-entity id="rig" position="0 0 3.2">
 				<a-entity id="camera" camera look-controls position="0 1.6 0"></a-entity>
 			</a-entity>
 
 			<a-entity light="type: ambient; intensity: 0.5;"></a-entity>
 			<a-entity light="type: directional; castShadow: true; intensity: 0.6;" position="-2.5 2 4"></a-entity>
 
-			<a-sky color="#FFFF00"></a-sky>
+			<a-sky color="#1F2122"></a-sky>
 		</a-scene>
 
 	</body>
