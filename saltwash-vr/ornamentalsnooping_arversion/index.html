@@ -1,0 +1,137 @@
+<html>
+	<head>
+		<title>SaltwashVR</title>
+		
+		<script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+		<script src="https://rawcdn.githack.com/elbobo/aframe-gltf-morph-component/07e9b80bd382cc1c19223468d35c453e7c76e9a2/dist/aframe-gltf-morph-component.js"></script>
+	</head>
+	<body>
+
+		<script>
+			// orchestrate speech
+			AFRAME.registerComponent('speech-orchestrator', {
+				schema: {
+					delay: {type: 'number'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const elSpeech = document.querySelector('.speech');
+
+					setTimeout(function() {
+						el.components.sound.playSound();
+						elSpeech.setAttribute('animation', {enabled: true});
+
+						el.addEventListener('sound-ended', function () {
+							elSpeech.setAttribute('animation', {enabled: false});
+						});
+					}, data.delay);
+				}
+			});
+
+			// link animation
+			AFRAME.registerComponent('animation-linker', {
+				init: function () {
+					const el = this.el;
+
+					el.addEventListener('animationcomplete', function() {
+						el.setAttribute('animation', {enabled: false});
+						el.setAttribute('animation__2', {enabled: true});
+					});
+				}
+			});
+
+			// clear scene
+			AFRAME.registerComponent('scene-clearer', {
+				schema: {
+					event: {type: 'string'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const sceneEl = this.el.sceneEl;
+
+					if (data.event) {
+						el.addEventListener(data.event, function() {
+							const els = sceneEl.querySelectorAll('.clear');
+							for (let i = 0; i < els.length; i++) {
+								sceneEl.removeChild(els[i]);
+							}
+						});
+					}
+				}
+			});
+		</script>
+
+		<a-scene renderer="colorManagement: true;">
+			<a-assets>
+				<a-asset-item id="dudebody-gltf" src="assets/os_dudebody.gltf"></a-asset-item>
+				<a-asset-item id="dudehead-gltf" src="assets/os_dudehead.gltf"></a-asset-item>
+				<a-asset-item id="dudehat-gltf" src="assets/os_dudehat.gltf"></a-asset-item>
+				<a-asset-item id="bird-gltf" src="assets/os_bird.gltf"></a-asset-item>
+			</a-assets>
+			
+			<a-entity
+			id="dudebody"
+			class="clear"
+			gltf-model="#dudebody-gltf"
+			position="0.02 10 -0.5"
+			scale="2.9 2.9 2.9"
+			animation-mixer></a-entity>
+
+			<a-entity 
+			id="dudehead"
+			class="speech clear"
+			gltf-model="#dudehead-gltf"
+			position="0 11.415 -0.5"
+			gltf-morph__squash="morphtarget:Squash;"
+			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400; enabled: false;"></a-entity>
+
+			<a-entity 
+			id="dudespeech1" 
+			position="0 11.415 -0.5" 
+			sound="src: url(assets/os_dude1.mp3);"
+			speech-orchestrator="delay: 3000;"></a-entity>
+
+			<a-entity 
+			id="dudespeech2" 
+			position="0 11.415 -0.5" 
+			sound="src: url(assets/os_dude2.mp3);"
+			speech-orchestrator="delay: 14000;"></a-entity>
+
+			<a-entity
+			id="dudehat"
+			class="clear"
+			gltf-model="#dudehat-gltf"
+			position="0 11.56 -0.5"></a-entity>
+
+			<a-entity
+			id="bird"
+			class="clear"
+			gltf-model="#bird-gltf"
+			position="0 9.5 -0.6"
+			scale="3 3 3"
+			animation-mixer></a-entity>
+
+			<a-entity 
+			id="track"
+			sound="src: url(assets/os_track.mp3); autoplay: true; positional: false; volume: 0.4;"
+			scene-clearer="event: sound-ended;"></a-entity>
+
+			<a-entity 
+			id="rig" 
+			animation="property: position; from: 0 10 1; to: 0 10 7; dur: 30000;"
+			animation__2="property: position; from: 0 10 7; to: 0 5 -7; dur: 6000; enabled: false;"
+			animation-linker>
+				<a-entity id="camera" camera look-controls position="0 1.6 0"></a-entity>
+			</a-entity>
+
+			<a-entity light="type: ambient; intensity: 0.5;"></a-entity>
+			<a-entity light="type: directional; intensity: 0.6;" position="-2.6 2 2"></a-entity>
+		</a-scene>
+
+	</body>
+</html>
