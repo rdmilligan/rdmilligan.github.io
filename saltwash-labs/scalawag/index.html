@@ -7,7 +7,7 @@
 	</head>
 	<body>
 
-		<a-scene webxr="optionalFeatures:  hit-test;" ar-hit-test="target:#scalawag;" renderer="colorManagement: true;">
+		<a-scene webxr="optionalFeatures: hit-test;" ar-hit-test="target:#scalawag;" renderer="colorManagement: true;">
 			<a-assets>
 				<a-asset-item id="scalawag-gltf" src="assets/ha_scalawag.gltf"></a-asset-item>
 				<a-asset-item id="stage-gltf" src="assets/ha_stage.gltf"></a-asset-item>
@@ -31,8 +31,8 @@
 				<a-entity id="camera" camera look-controls position="0 1.6 0"></a-entity>
 			</a-entity>
 
-			<a-entity hide-on-enter-ar light="type: ambient; intensity: 0.5;"></a-entity>
-			<a-entity hide-on-enter-ar light="type: point; castShadow: true; intensity: 0.5; distance: 50; decay: 2" position="0 2.2 -1.0"></a-entity>
+			<a-entity light="type: ambient; intensity: 0.5;"></a-entity>
+			<a-entity light="type: point; castShadow: true; intensity: 0.5; distance: 50; decay: 2" position="0 2.2 -1.0"></a-entity>
 
 			<a-sky hide-on-enter-ar color="#19ABE5"></a-sky>
 		</a-scene>
