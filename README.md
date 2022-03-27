@@ -33,3 +33,9 @@ Driver 360 is a virtual driving experience on a web page, built with React 360. 
 Saltwash VR is a virtual world on stereoscopic video.
 
 ![SaltwashVR](https://rdmilligan.files.wordpress.com/2020/05/oculusrifts_dudenoir_part5_stillb.png "Saltwash VR")
+
+# Saltwash Labs
+
+[Try Saltwash Labs online](https://rdmilligan.github.io/saltwash-labs/)
+
+Saltwash Labs is a mixed reality environment.
