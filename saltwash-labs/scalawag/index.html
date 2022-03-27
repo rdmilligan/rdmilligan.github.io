@@ -1,0 +1,41 @@
+<html>
+	<head>
+		<title>Saltwash Labs</title>
+		
+		<script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+	</head>
+	<body>
+
+		<a-scene webxr="optionalFeatures:  hit-test;" ar-hit-test="target:#scalawag;" renderer="colorManagement: true;">
+			<a-assets>
+				<a-asset-item id="scalawag-gltf" src="assets/ha_scalawag.gltf"></a-asset-item>
+				<a-asset-item id="stage-gltf" src="assets/ha_stage.gltf"></a-asset-item>
+			</a-assets>
+
+			<a-entity
+			id="scalawag"
+			gltf-model="#scalawag-gltf"
+			position="-0.9 0 -1.5"
+			scale="1.25 1.25 1.25"
+			shadow="receive: false"
+			animation-mixer></a-entity>
+
+			<a-entity 
+			hide-on-enter-ar
+			id="stage"
+			gltf-model="#stage-gltf"
+			shadow="cast: false"></a-entity>
+
+			<a-entity id="rig" position="0 0 2.2">
+				<a-entity id="camera" camera look-controls position="0 1.6 0"></a-entity>
+			</a-entity>
+
+			<a-entity hide-on-enter-ar light="type: ambient; intensity: 0.5;"></a-entity>
+			<a-entity hide-on-enter-ar light="type: point; castShadow: true; intensity: 0.5; distance: 50; decay: 2" position="0 2.2 -1.0"></a-entity>
+
+			<a-sky hide-on-enter-ar color="#19ABE5"></a-sky>
+		</a-scene>
+
+	</body>
+</html>
