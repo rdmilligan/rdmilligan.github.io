@@ -38,4 +38,8 @@ Saltwash VR is a virtual world on stereoscopic video.
 
 [Try Saltwash Labs online](https://rdmilligan.github.io/saltwash-labs/)
 
-Saltwash Labs is a mixed reality environment.
+[Read the post](https://rdmilligan.wordpress.com/2022/04/02/a-frame-ar-augmented-reality-on-mobile-phone/)
+
+Saltwash Labs is for mixed reality experiments.
+
+![SaltwashLabs](https://rdmilligan.files.wordpress.com/2022/04/aframearmobile_scalawag.jpg "Saltwash Labs")
