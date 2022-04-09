@@ -1,0 +1,99 @@
+<html>
+	<head>
+		<title>SaltwashVR</title>
+		
+		<script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+		<script src="https://rawcdn.githack.com/elbobo/aframe-gltf-morph-component/07e9b80bd382cc1c19223468d35c453e7c76e9a2/dist/aframe-gltf-morph-component.js"></script>
+	</head>
+	<body>
+
+		<script>
+			// clear scene
+			AFRAME.registerComponent('scene-clearer', {
+				schema: {
+					event: {type: 'string'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const sceneEl = this.el.sceneEl;
+
+					if (data.event) {
+						el.addEventListener(data.event, function() {
+							const els = sceneEl.querySelectorAll('.clear');
+							for (let i = 0; i < els.length; i++) {
+								sceneEl.removeChild(els[i]);
+							}
+						});
+					}
+				}
+			});
+		</script>
+
+		<a-scene renderer="colorManagement: true;">
+			<a-assets>
+				<a-asset-item id="dude-gltf" src="assets/mp_dude.gltf"></a-asset-item>
+				<a-asset-item id="motorbike-gltf" src="assets/mp_motorbike.gltf"></a-asset-item>
+				<a-asset-item id="sign1-gltf" src="assets/mp_sign1.gltf"></a-asset-item>
+				<a-asset-item id="sign2-gltf" src="assets/mp_sign2.gltf"></a-asset-item>
+				<a-asset-item id="stage-gltf" src="assets/mp_stage.gltf"></a-asset-item>
+			</a-assets>
+
+			<a-entity 
+			id="dude"
+			class="clear"
+			gltf-model="#dude-gltf"
+			position="1.22 0.21 0.59"
+			rotation="0 190 0"
+			scale="2.9 2.9 2.9"
+			shadow="receive: false"
+			animation-mixer></a-entity>
+
+			<a-entity 
+			id="motorbike"
+			class="clear"
+			gltf-model="#motorbike-gltf"
+			position="1 0 0"
+			rotation="0 110 0"
+			shadow="receive: false"></a-entity>
+
+			<a-entity
+			id="sign1"
+			gltf-model="#sign1-gltf"
+			position="-2 0 -0.3"
+			scale="0.5 0.5 0.5"
+			shadow="receive: false"
+			animation="property: rotation; from: 0 0 0; to: 0 4320 0; dur: 20000;"></a-entity>
+
+			<a-entity
+			id="sign2"
+			gltf-model="#sign2-gltf"
+			position="-1 0 -1"
+			scale="0.5 0.5 0.5"
+			shadow="receive: false"
+			animation="property: rotation; from: 0 0 0; to: 0 4320 0; dur:20000;"></a-entity>
+
+			<a-entity
+			id="stage"
+			gltf-model="#stage-gltf"
+			shadow="cast: false"></a-entity>
+
+			<a-entity 
+			id="track"
+			sound="src: url(assets/mp_track.mp3); autoplay: true; positional: false; volume: 0.4;"
+			scene-clearer="event: sound-ended;"></a-entity>
+
+			<a-entity id="rig" position="0 0 3.2">
+				<a-entity id="camera" camera look-controls position="0 1.6 0"></a-entity>
+			</a-entity>
+
+			<a-entity light="type: ambient; intensity: 0.1;"></a-entity>
+			<a-entity light="type: point; castShadow: true; intensity: 0.5; distance: 50; decay: 2" position="2 5 2"></a-entity>
+
+			<a-sky color="#1F2122"></a-sky>
+		</a-scene>
+
+	</body>
+</html>
