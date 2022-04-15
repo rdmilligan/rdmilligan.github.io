@@ -1,0 +1,146 @@
+<html>
+	<head>
+		<title>SaltwashVR</title>
+		
+		<script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+		<script src="https://rawcdn.githack.com/elbobo/aframe-gltf-morph-component/07e9b80bd382cc1c19223468d35c453e7c76e9a2/dist/aframe-gltf-morph-component.js"></script>
+	</head>
+	<body>
+
+		<script>
+			// orchestrate speech
+			AFRAME.registerComponent('speech-orchestrator', {
+				schema: {
+					delay: {type: 'number'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const elSpeech = document.querySelector('.speech');
+
+					setTimeout(function() {
+						el.components.sound.playSound();
+						elSpeech.setAttribute('animation', {enabled: true});
+
+						el.addEventListener('sound-ended', function () {
+							elSpeech.setAttribute('animation', {enabled: false});
+						});
+					}, data.delay);
+				}
+			});
+
+			// clear scene
+			AFRAME.registerComponent('scene-clearer', {
+				schema: {
+					event: {type: 'string'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const sceneEl = this.el.sceneEl;
+
+					if (data.event) {
+						el.addEventListener(data.event, function() {
+							const els = sceneEl.querySelectorAll('.clear');
+							for (let i = 0; i < els.length; i++) {
+								sceneEl.removeChild(els[i]);
+							}
+						});
+					}
+				}
+			});
+		</script>
+
+		<a-scene renderer="colorManagement: true;">
+			<a-assets>
+				<a-asset-item id="dudebody-gltf" src="assets/dltds_dudebody.gltf"></a-asset-item>
+				<a-asset-item id="dudehead-gltf" src="assets/dltds_dudehead.gltf"></a-asset-item>
+				<a-asset-item id="dudehat-gltf" src="assets/dltds_dudehat.gltf"></a-asset-item>
+				<a-asset-item id="flowers-gltf" src="assets/dltds_flowers.gltf"></a-asset-item>
+				<a-asset-item id="trees-gltf" src="assets/dltds_trees.gltf"></a-asset-item>
+				<a-asset-item id="tent-gltf" src="assets/dltds_tent.gltf"></a-asset-item>
+				<a-asset-item id="stage-gltf" src="assets/dltds_stage.gltf"></a-asset-item>
+			</a-assets>
+
+			<a-entity
+			id="dudebody"
+			class="clear"
+			gltf-model="#dudebody-gltf"
+			position="0.02 0 0"
+			scale="2.9 2.9 2.9"
+			shadow="receive: false"
+			animation-mixer></a-entity>
+
+			<a-entity 
+			id="dudehead"
+			class="speech clear"
+			gltf-model="#dudehead-gltf"
+			position="0 1.415 0"
+			shadow="receive: false"
+			gltf-morph__squash="morphtarget:Squash;"
+			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400; enabled: false;"></a-entity>
+
+			<a-entity 
+			id="dudespeech" 
+			position="0 1.415 0" 
+			sound="src: url(assets/dltds_dude.mp3);"
+			speech-orchestrator="delay: 8000;"></a-entity>
+
+			<a-entity
+			id="dudehat"
+			class="clear"
+			gltf-model="#dudehat-gltf"
+			position="0 1.56 0"
+			shadow="receive: false"></a-entity>
+
+			<a-entity
+			id="flowers"
+			class="clear"
+			gltf-model="#flowers-gltf"
+			position="0.5 0 0.2"
+			scale="0.25 0.25 0.25"
+			shadow="receive: false"
+			animation-mixer></a-entity>
+
+			<a-entity
+			id="trees"
+			class="clear"
+			gltf-model="#trees-gltf"
+			position="-2.2 0 -1.2"
+			shadow="receive: false"></a-entity>
+
+			<a-entity
+			id="tent"
+			class="clear"
+			gltf-model="#tent-gltf"
+			position="0 0 -3"
+			rotation="0 20 0"
+			shadow="receive: false"></a-entity>
+
+			<a-entity
+			id="stage"
+			gltf-model="#stage-gltf"
+			shadow="cast: false"></a-entity>
+
+			<a-entity 
+			id="track"
+			sound="src: url(assets/dltds_track.mp3); autoplay: true; positional: false; volume: 0.2;"
+			scene-clearer="event: sound-ended;"></a-entity>
+
+			<a-entity id="rig" position="0 0 2.4">
+				<a-entity id="camera" camera look-controls position="0 1.6 0">
+					<a-entity cursor></a-entity>
+				</a-entity>
+			</a-entity>
+
+			<a-entity light="type: ambient; intensity: 0.3;"></a-entity>
+			<a-entity light="type: directional; castShadow: true; intensity: 0.6;" position="-2.5 2 4"></a-entity>
+
+			<a-sky color="#19ABE5"></a-sky>
+		</a-scene>
+
+	</body>
+</html>
