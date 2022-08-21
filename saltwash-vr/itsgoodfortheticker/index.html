@@ -1,0 +1,347 @@
+<html>
+	<head>
+		<title>SaltwashVR</title>
+		
+		<script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+		<script src="https://rawcdn.githack.com/elbobo/aframe-gltf-morph-component/07e9b80bd382cc1c19223468d35c453e7c76e9a2/dist/aframe-gltf-morph-component.js"></script>
+	</head>
+	<body>
+
+		<script>
+			// remove cursor
+			AFRAME.registerComponent('cursor-remover', {
+			  init: function () {
+				var sceneEl = this.el
+				var elCursor = document.querySelector('#cursor');
+
+				sceneEl.addEventListener('enter-vr', function () {
+				   elCursor.parentNode.removeChild(elCursor);
+				});
+			  }
+			});
+
+			// orchestrate speech
+			AFRAME.registerComponent('speech-orchestrator', {
+				schema: {
+					delay: {type: 'number'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const elSpeak = document.querySelector('.speak');
+
+					setTimeout(function() {
+						el.components.sound.playSound();
+						elSpeak.setAttribute('animation', {enabled: true});
+
+						el.addEventListener('sound-ended', function () {
+							el.setAttribute('sound-ended', true);
+							elSpeak.setAttribute('animation', {enabled: false});
+						});
+					}, data.delay);
+				}
+			});
+
+			// clear scene
+			AFRAME.registerComponent('scene-clearer', {
+				schema: {
+					event: {type: 'string'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const sceneEl = this.el.sceneEl;
+
+					if (data.event) {
+						el.addEventListener(data.event, function() {
+							const els = sceneEl.querySelectorAll('.clear');
+							for (let i = 0; i < els.length; i++) {
+								sceneEl.removeChild(els[i]);
+							}
+						});
+					}
+				}
+			});
+
+			// drink beer
+			AFRAME.registerComponent('beer-drinker', {
+				init: function () {
+					var el = this.el;
+					var elDudeBodyStanding = document.querySelector('#dudebodystanding');
+					var elDudeBodySitting = document.querySelector('#dudebodysitting');
+					var elDudeHead = document.querySelector('#dudehead');
+					var elDudeHat = document.querySelector('#dudehat');
+					var elDudeStandingSpeech = document.querySelector('#dudestandingspeech');
+					var elDudeSittingSpeech = document.querySelector('#dudesittingspeech');
+					var elSky = document.querySelector('#sky');
+
+					el.addEventListener('click', function () {
+						if (elDudeBodyStanding.getAttribute('visible') && elDudeStandingSpeech.getAttribute('sound-ended')) {
+							elDudeBodyStanding.setAttribute('visible', false);
+							elDudeBodySitting.setAttribute('visible', true);
+							elDudeHead.setAttribute('position', {x: 1, y: 0.89, z: 0});
+							elDudeHat.setAttribute('position', {x: 1, y: 1.035, z: 0});
+							
+							elDudeSittingSpeech.components.sound.playSound();
+							elDudeHead.setAttribute('animation', {enabled: true});
+
+							elDudeSittingSpeech.addEventListener('sound-ended', function () {
+								elDudeSittingSpeech.setAttribute('sound-ended', true);
+								elDudeHead.setAttribute('animation', {enabled: false});
+							});
+
+							elSky.setAttribute('color', '#0F6A8C');
+						}
+					});
+				}
+			});
+
+			// drink wine
+			AFRAME.registerComponent('wine-drinker', {
+				init: function () {
+					var el = this.el;
+					var elDudeBodySitting = document.querySelector('#dudebodysitting');
+					var elDudeBodyLying = document.querySelector('#dudebodylying');
+					var elDudeHead = document.querySelector('#dudehead');
+					var elDudeHat = document.querySelector('#dudehat');
+					var elDudeSittingSpeech = document.querySelector('#dudesittingspeech');
+					var elDudeLyingSpeech = document.querySelector('#dudelyingspeech');
+					var elSky = document.querySelector('#sky');
+
+					el.addEventListener('click', function () {
+						if (elDudeBodySitting.getAttribute('visible') && elDudeSittingSpeech.getAttribute('sound-ended')) {
+							elDudeBodySitting.setAttribute('visible', false);
+							elDudeBodyLying.setAttribute('visible', true);
+							elDudeHead.setAttribute('position', {x: 1, y: 0.191, z: -0.766});
+							elDudeHead.setAttribute('rotation', {x: -90, y: 0, z: 0});
+							elDudeHat.setAttribute('position', {x: 1, y: 0.283, z: -0.954});
+							elDudeHat.setAttribute('rotation', {x: -52.222, y: 0, z: 0});
+							
+							elDudeLyingSpeech.components.sound.playSound();
+							elDudeHead.setAttribute('animation', {enabled: true});
+
+							elDudeLyingSpeech.addEventListener('sound-ended', function () {
+								elDudeHead.setAttribute('animation', {enabled: false});
+							});
+
+							elSky.setAttribute('color', '#062C39');
+						}
+					});
+				}
+			});
+		</script>
+
+		<a-scene renderer="colorManagement: true;" cursor-remover>
+			<a-assets>
+				<a-asset-item id="dudebodystanding-gltf" src="assets/igftt_dudebodystanding.gltf"></a-asset-item>
+				<a-asset-item id="dudebodysitting-gltf" src="assets/igftt_dudebodysitting.gltf"></a-asset-item>
+				<a-asset-item id="dudebodylying-gltf" src="assets/igftt_dudebodylying.gltf"></a-asset-item>
+				<a-asset-item id="dudehead-gltf" src="assets/igftt_dudehead.gltf"></a-asset-item>
+				<a-asset-item id="dudehat-gltf" src="assets/igftt_dudehat.gltf"></a-asset-item>
+				<a-asset-item id="table-gltf" src="assets/igftt_table.gltf"></a-asset-item>
+				<a-asset-item id="beer-gltf" src="assets/igftt_beer.gltf"></a-asset-item>
+				<a-asset-item id="wine-gltf" src="assets/igftt_wine.gltf"></a-asset-item>
+				<a-asset-item id="stage-gltf" src="assets/igftt_stage.gltf"></a-asset-item>
+			</a-assets>
+
+			<a-entity
+			id="dudebodystanding"
+			class="clear"
+			gltf-model="#dudebodystanding-gltf"
+			position="1.02 0 0"
+			scale="2.9 2.9 2.9"
+			shadow="receive: false"
+			animation-mixer></a-entity>
+
+			<a-entity
+			id="dudebodysitting"
+			class="clear"
+			gltf-model="#dudebodysitting-gltf"
+			position="1.02 0 0"
+			scale="2.9 2.9 2.9"
+			shadow="receive: false"
+			animation-mixer
+			visible="false"></a-entity>
+
+			<a-entity
+			id="dudebodylying"
+			class="clear"
+			gltf-model="#dudebodylying-gltf"
+			position="1.02 0 0"
+			scale="2.9 2.9 2.9"
+			shadow="receive: false"
+			animation-mixer
+			visible="false"></a-entity>
+
+			<a-entity 
+			id="dudehead"
+			class="speak clear"
+			gltf-model="#dudehead-gltf"
+			position="1 1.415 0"
+			shadow="receive: false"
+			gltf-morph__squash="morphtarget: Squash"
+			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400; enabled: false;"></a-entity>
+
+			<a-entity 
+			id="dudestandingspeech"
+			class="clear"
+			position="1 1.415 0" 
+			sound="src: url(assets/igftt_dudestanding.mp3)"
+			speech-orchestrator="delay: 8000"></a-entity>
+
+			<a-entity 
+			id="dudesittingspeech"
+			class="clear"
+			position="1 0.89 0" 
+			sound="src: url(assets/igftt_dudesitting.mp3)"></a-entity>
+
+			<a-entity 
+			id="dudelyingspeech"
+			class="clear"
+			position="1 0.191 -0.766" 
+			sound="src: url(assets/igftt_dudelying.mp3)"></a-entity>
+
+			<a-entity
+			id="dudehat"
+			class="clear"
+			gltf-model="#dudehat-gltf"
+			position="1 1.56 0"
+			shadow="receive: false"></a-entity>
+
+			<a-entity
+			id="table"
+			class="clear"
+			gltf-model="#table-gltf"
+			position="-1 0 0"
+			shadow="receive: false"></a-entity>
+
+			<a-entity
+			id="beer"
+			class="clear"
+			gltf-model="#beer-gltf"
+			position="-1.5 0.66 0"
+			shadow="receive: false"
+			beer-drinker></a-entity>
+
+			<a-entity
+			id="wine"
+			class="clear"
+			gltf-model="#wine-gltf"
+			position="-0.5 0.66 0"
+			shadow="receive: false"
+			wine-drinker></a-entity>
+
+			<a-entity
+			id="stage"
+			gltf-model="#stage-gltf"
+			shadow="cast: false"></a-entity>
+
+			<a-entity 
+			id="track"
+			sound="src: url(assets/igftt_track.mp3); autoplay: true; positional: false; volume: 0.2;"
+			scene-clearer="event: sound-ended"></a-entity>
+
+			<a-entity id="rig" position="0 0 2.4">
+				<a-entity id="camera" camera look-controls position="0 1.6 0">
+					<a-cursor id="cursor" material="color: red"></a-cursor>
+				</a-entity>
+				<a-entity laser-controls="hand: left" raycaster="lineColor: red"></a-entity>
+			</a-entity>
+
+			<a-entity light="type: ambient; intensity: 0.3;"></a-entity>
+			<a-entity light="type: directional; castShadow: true; intensity: 0.6;" position="-2.5 2 4"></a-entity>
+
+			<a-sky id="sky" color="#19ABE5"></a-sky>
+		</a-scene>
+			<a-assets>
+				<a-asset-item id="dudebody-gltf" src="assets/dltds_dudebody.gltf"></a-asset-item>
+				<a-asset-item id="dudehead-gltf" src="assets/dltds_dudehead.gltf"></a-asset-item>
+				<a-asset-item id="dudehat-gltf" src="assets/dltds_dudehat.gltf"></a-asset-item>
+				<a-asset-item id="flowers-gltf" src="assets/dltds_flowers.gltf"></a-asset-item>
+				<a-asset-item id="trees-gltf" src="assets/dltds_trees.gltf"></a-asset-item>
+				<a-asset-item id="tent-gltf" src="assets/dltds_tent.gltf"></a-asset-item>
+				<a-asset-item id="stage-gltf" src="assets/dltds_stage.gltf"></a-asset-item>
+			</a-assets>
+
+			<a-entity
+			id="dudebody"
+			class="clear"
+			gltf-model="#dudebody-gltf"
+			position="0.02 0 0"
+			scale="2.9 2.9 2.9"
+			shadow="receive: false"
+			animation-mixer></a-entity>
+
+			<a-entity 
+			id="dudehead"
+			class="speech clear"
+			gltf-model="#dudehead-gltf"
+			position="0 1.415 0"
+			shadow="receive: false"
+			gltf-morph__squash="morphtarget:Squash;"
+			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400; enabled: false;"></a-entity>
+
+			<a-entity 
+			id="dudespeech" 
+			position="0 1.415 0" 
+			sound="src: url(assets/dltds_dude.mp3);"
+			speech-orchestrator="delay: 8000;"></a-entity>
+
+			<a-entity
+			id="dudehat"
+			class="clear"
+			gltf-model="#dudehat-gltf"
+			position="0 1.56 0"
+			shadow="receive: false"></a-entity>
+
+			<a-entity
+			id="flowers"
+			class="clear"
+			gltf-model="#flowers-gltf"
+			position="0.5 0 0.2"
+			scale="0.25 0.25 0.25"
+			shadow="receive: false"
+			animation-mixer></a-entity>
+
+			<a-entity
+			id="trees"
+			class="clear"
+			gltf-model="#trees-gltf"
+			position="-2.2 0 -1.2"
+			shadow="receive: false"></a-entity>
+
+			<a-entity
+			id="tent"
+			class="clear"
+			gltf-model="#tent-gltf"
+			position="0 0 -3"
+			rotation="0 20 0"
+			shadow="receive: false"></a-entity>
+
+			<a-entity
+			id="stage"
+			gltf-model="#stage-gltf"
+			shadow="cast: false"></a-entity>
+
+			<a-entity 
+			id="track"
+			sound="src: url(assets/dltds_track.mp3); autoplay: true; positional: false; volume: 0.2;"
+			scene-clearer="event: sound-ended;"></a-entity>
+
+			<a-entity id="rig" position="0 0 2.4">
+				<a-entity id="camera" camera look-controls position="0 1.6 0">
+					<a-entity cursor></a-entity>
+				</a-entity>
+			</a-entity>
+
+			<a-entity light="type: ambient; intensity: 0.3;"></a-entity>
+			<a-entity light="type: directional; castShadow: true; intensity: 0.6;" position="-2.5 2 4"></a-entity>
+
+			<a-sky color="#19ABE5"></a-sky>
+		</a-scene>
+
+	</body>
+</html>
