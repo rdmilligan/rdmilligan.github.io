@@ -116,7 +116,7 @@
 
 			<a-entity 
 			id="hippo"
-			class="clear"
+			class="raycastermouseenter clear"
 			gltf-model="#hippo-gltf"
 			position="2.6 0 -2.8"
 			rotation="0 -50 0"
@@ -126,7 +126,7 @@
 
 			<a-entity 
 			id="elephant"
-			class="clear"
+			class="raycastermouseenter clear"
 			gltf-model="#elephant-gltf"
 			position="-3.2 0 -2.8"
 			rotation="0 50 0"
@@ -137,7 +137,7 @@
 
 			<a-entity 
 			id="giraffe"
-			class="clear"
+			class="raycastermouseenter clear"
 			gltf-model="#giraffe-gltf"
 			position="-1.2 0 -2.8"
 			rotation="0 40 0"
@@ -148,7 +148,7 @@
 
 			<a-entity 
 			id="rhino"
-			class="clear"
+			class="raycastermouseenter clear"
 			gltf-model="#rhino-gltf"
 			position="3.6 0 -1.5"
 			rotation="0 -80 0"
@@ -168,7 +168,7 @@
 
 			<a-entity id="rig" position="0 0 1.7">
 				<a-entity id="camera" camera look-controls position="0 1.6 0">
-					<a-entity cursor></a-entity>
+					<a-entity cursor raycaster="objects: .raycastermouseenter"></a-entity>
 				</a-entity>
 			</a-entity>
 
@@ -177,6 +177,7 @@
 
 			<a-sky color="#19ABE5"></a-sky>
 		</a-scene>
+
 
 	</body>
 </html>
