@@ -37,7 +37,7 @@
 						elSpeak.setAttribute('animation', {enabled: true});
 
 						el.addEventListener('sound-ended', function () {
-							el.setAttribute('sound-ended', true);
+							el.addState('sound-ended');
 							elSpeak.setAttribute('animation', {enabled: false});
 						});
 					}, data.delay);
@@ -79,7 +79,7 @@
 					var elSky = document.querySelector('#sky');
 
 					el.addEventListener('click', function () {
-						if (elDudeBodyStanding.getAttribute('visible') && elDudeStandingSpeech.getAttribute('sound-ended')) {
+						if (elDudeBodyStanding.getAttribute('visible') && elDudeStandingSpeech.is('sound-ended')) {
 							elDudeBodyStanding.setAttribute('visible', false);
 							elDudeBodySitting.setAttribute('visible', true);
 							elDudeHead.setAttribute('position', {x: 1, y: 0.89, z: 0});
@@ -89,7 +89,7 @@
 							elDudeHead.setAttribute('animation', {enabled: true});
 
 							elDudeSittingSpeech.addEventListener('sound-ended', function () {
-								elDudeSittingSpeech.setAttribute('sound-ended', true);
+								elDudeSittingSpeech.addState('sound-ended');
 								elDudeHead.setAttribute('animation', {enabled: false});
 							});
 
@@ -112,7 +112,7 @@
 					var elSky = document.querySelector('#sky');
 
 					el.addEventListener('click', function () {
-						if (elDudeBodySitting.getAttribute('visible') && elDudeSittingSpeech.getAttribute('sound-ended')) {
+						if (elDudeBodySitting.getAttribute('visible') && elDudeSittingSpeech.is('sound-ended')) {
 							elDudeBodySitting.setAttribute('visible', false);
 							elDudeBodyLying.setAttribute('visible', true);
 							elDudeHead.setAttribute('position', {x: 1, y: 0.191, z: -0.766});
