@@ -1,0 +1,267 @@
+<html>
+	<head>
+		<title>SaltwashVR</title>
+		
+		<script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+		<script src="https://rawcdn.githack.com/elbobo/aframe-gltf-morph-component/07e9b80bd382cc1c19223468d35c453e7c76e9a2/dist/aframe-gltf-morph-component.js"></script>
+	</head>
+	<body>
+
+		<script>
+			// remove cursor
+			AFRAME.registerComponent('cursor-remover', {
+			  init: function () {
+				var sceneEl = this.el
+				var elCursor = document.querySelector('#cursor');
+
+				sceneEl.addEventListener('enter-vr', function () {
+				   elCursor.parentNode.removeChild(elCursor);
+				});
+			  }
+			});
+
+			// orchestrate sound
+			AFRAME.registerComponent('speech-orchestrator', {
+				schema: {
+					delay: {type: 'number'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const elSpeak = document.querySelector('.speak');
+
+					setTimeout(function() {
+						el.components.sound.playSound();
+						elSpeak.setAttribute('animation', {enabled: true});
+
+						el.addEventListener('sound-ended', function () {
+							el.addState('sound-ended');
+							elSpeak.setAttribute('animation', {enabled: false});
+						});
+					}, data.delay);
+				}
+			});
+
+			// clear scene
+			AFRAME.registerComponent('scene-clearer', {
+				schema: {
+					event: {type: 'string'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const sceneEl = this.el.sceneEl;
+
+					if (data.event) {
+						el.addEventListener(data.event, function() {
+							const els = sceneEl.querySelectorAll('.clear');
+							for (let i = 0; i < els.length; i++) {
+								sceneEl.removeChild(els[i]);
+							}
+						});
+					}
+				}
+			});
+			
+			// highlight teleporter
+			AFRAME.registerComponent('teleporter-highlighter', {
+				init: function () {
+					const el = this.el;
+
+					el.addEventListener('mouseenter', function () {
+						el.setAttribute('scale', {x: 2, y: 2, z: 2});
+					});
+
+					el.addEventListener('mouseleave', function () {
+						el.setAttribute('scale', {x: 1, y: 1, z: 1});
+					});
+				}
+			});
+
+			// select teleporter 1
+			AFRAME.registerComponent('teleporter1-selector', {
+				init: function () {
+					const el = this.el;
+					var elRig = document.querySelector('#rig');
+					
+					el.addEventListener('click', function () {
+						elRig.setAttribute('position', {x: 0, y: 0, z: 2});
+						elRig.setAttribute('rotation', {x: 0, y: 0, z: 0});
+					});
+				}
+			});
+
+			// select teleporter 2
+			AFRAME.registerComponent('teleporter2-selector', {
+				init: function () {
+					const el = this.el;
+					const elSpeak = document.querySelector('.speak');
+					var elSumoWrestler = document.querySelector('#sumowrestler');
+					var elDudeStandingSpeech = document.querySelector('#dudestandingspeech');
+					var elDudeSwipingSpeech = document.querySelector('#dudeswipingspeech');
+					var elRig = document.querySelector('#rig');
+					
+					el.addEventListener('click', function () {
+						elRig.setAttribute('position', {x: -4.5, y: 0, z: -2});
+						elRig.setAttribute('rotation', {x: 0, y: -90, z: 0});
+
+						if (elSumoWrestler.getAttribute('animation-mixer').clip == 'standing' && elDudeStandingSpeech.is('sound-ended') && !elDudeSwipingSpeech.is('sound-ended')) {
+							elSpeak.setAttribute('animation', {enabled: true});
+							elSumoWrestler.setAttribute('animation-mixer', {clip: 'swiping'});
+							elDudeSwipingSpeech.components.sound.playSound();
+
+							elDudeSwipingSpeech.addEventListener('sound-ended', function () {
+								elSpeak.setAttribute('animation', {enabled: false});
+								elSumoWrestler.setAttribute('animation-mixer', {clip: 'standing'});
+								elDudeSwipingSpeech.addState('sound-ended');
+							});
+						}
+					});
+				}
+			});
+
+			// select teleporter 3
+			AFRAME.registerComponent('teleporter3-selector', {
+				init: function () {
+					const el = this.el;
+					const elSpeak = document.querySelector('.speak');
+					var elSumoWrestler = document.querySelector('#sumowrestler');
+					var elDudeStandingSpeech = document.querySelector('#dudestandingspeech');
+					var elDudeGrabbingSpeech = document.querySelector('#dudegrabbingspeech');
+					var elRig = document.querySelector('#rig');
+					
+					el.addEventListener('click', function () {
+						elRig.setAttribute('position', {x: 4.5, y: 0, z: -2});
+						elRig.setAttribute('rotation', {x: 0, y: 90, z: 0});
+
+						if (elSumoWrestler.getAttribute('animation-mixer').clip == 'standing' && elDudeStandingSpeech.is('sound-ended') && !elDudeGrabbingSpeech.is('sound-ended')) {
+							elSpeak.setAttribute('animation', {enabled: true});
+							elSumoWrestler.setAttribute('animation-mixer', {clip: 'grabbing'});
+							elDudeGrabbingSpeech.components.sound.playSound();
+
+							elDudeGrabbingSpeech.addEventListener('sound-ended', function () {
+								elSpeak.setAttribute('animation', {enabled: false});
+								elSumoWrestler.setAttribute('animation-mixer', {clip: 'standing'});
+								elDudeGrabbingSpeech.addState('sound-ended');
+							});
+						}
+					});
+				}
+			});
+		</script>
+
+		<a-scene renderer="colorManagement: true;" cursor-remover>
+			<a-assets>
+				<a-asset-item id="dudebody-gltf" src="assets/s_dudebody.gltf"></a-asset-item>
+				<a-asset-item id="dudehead-gltf" src="assets/s_dudehead.gltf"></a-asset-item>
+				<a-asset-item id="dudehat-gltf" src="assets/s_dudehat.gltf"></a-asset-item>
+				<a-asset-item id="sumowrestler-gltf" src="assets/s_sumowrestler.gltf"></a-asset-item>
+				<a-asset-item id="teleporter-gltf" src="assets/s_teleporter.gltf"></a-asset-item>
+				<a-asset-item id="stage-gltf" src="assets/s_stage.gltf"></a-asset-item>
+			</a-assets>
+
+			<a-entity
+			id="dudebody"
+			class="clear"
+			gltf-model="#dudebody-gltf"
+			position="-0.48 0 0"
+			scale="2.9 2.9 2.9"
+			shadow="receive: false"
+			animation-mixer></a-entity>
+
+			<a-entity 
+			id="dudehead"
+			class="speak clear"
+			gltf-model="#dudehead-gltf"
+			position="-0.5 1.415 0"
+			shadow="receive: false"
+			gltf-morph__squash="morphtarget: Squash"
+			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400; enabled: false;"></a-entity>
+
+			<a-entity 
+			id="dudestandingspeech"
+			class="clear"
+			position="-0.5 1.415 0" 
+			sound="src: url(assets/s_dudestanding.mp3)"
+			speech-orchestrator="delay: 5600"></a-entity>
+
+			<a-entity 
+			id="dudegrabbingspeech"
+			class="clear"
+			position="-0.5 1.415 0" 
+			sound="src: url(assets/s_dudegrabbing.mp3)"></a-entity>
+
+			<a-entity 
+			id="dudeswipingspeech"
+			class="clear"
+			position="-0.5 1.415 0" 
+			sound="src: url(assets/s_dudeswiping.mp3)"></a-entity>
+
+			<a-entity
+			id="dudehat"
+			class="clear"
+			gltf-model="#dudehat-gltf"
+			position="-0.5 1.56 0"
+			shadow="receive: false"></a-entity>
+
+			<a-entity
+			id="sumowrestler"
+			class="clear"
+			gltf-model="#sumowrestler-gltf"
+			position="1.3 0.58 -3.3"
+			rotation="0 -40 0"
+			shadow="receive: false"
+			animation-mixer="clip: standing; loop: once;"></a-entity>
+
+			<a-entity
+			id="teleporter1"
+			class="raycasterclick clear"
+			gltf-model="#teleporter-gltf"
+			position="0 0 2"
+			teleporter-highlighter
+			teleporter1-selector></a-entity>
+
+			<a-entity
+			id="teleporter2"
+			class="raycasterclick clear"
+			gltf-model="#teleporter-gltf"
+			position="-4.5 0 -2"
+			teleporter-highlighter
+			teleporter2-selector></a-entity>
+
+			<a-entity
+			id="teleporter3"
+			class="raycasterclick clear"
+			gltf-model="#teleporter-gltf"
+			position="4.5 0 -2"
+			teleporter-highlighter
+			teleporter3-selector></a-entity>
+
+			<a-entity
+			id="stage"
+			gltf-model="#stage-gltf"
+			shadow="cast: false"></a-entity>
+
+			<a-entity 
+			id="track"
+			sound="src: url(assets/s_track.mp3); autoplay: true; positional: false; volume: 0.2;"
+			scene-clearer="event: sound-ended"></a-entity>
+
+			<a-entity id="rig" position="0 0 2">
+				<a-entity id="camera" camera look-controls position="0 1.6 0">
+					<a-cursor id="cursor" raycaster="objects: .raycasterclick" material="color: red"></a-cursor>
+				</a-entity>
+				<a-entity laser-controls="hand: left" raycaster="objects: .raycasterclick; lineColor: red;"></a-entity>
+			</a-entity>
+
+			<a-entity light="type: ambient; intensity: 0.3;"></a-entity>
+			<a-entity light="type: directional; castShadow: true; intensity: 0.6;" position="-2.5 2 4"></a-entity>
+
+			<a-sky id="sky" color="#19ABE5"></a-sky>
+		</a-scene>
+
+	</body>
+</html>
