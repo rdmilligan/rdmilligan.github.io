@@ -1,0 +1,256 @@
+<html>
+	<head>
+		<title>SaltwashVR</title>
+		
+		<script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+		<script src="https://rawcdn.githack.com/elbobo/aframe-gltf-morph-component/07e9b80bd382cc1c19223468d35c453e7c76e9a2/dist/aframe-gltf-morph-component.js"></script>
+		<script src="js/alchemy.js"></script>
+	</head>
+	<body>
+
+		<script>
+			// remove cursor
+			AFRAME.registerComponent('cursor-remover', {
+			  init: function () {
+				var sceneEl = this.el
+				var elCursor = document.querySelector('#cursor');
+
+				sceneEl.addEventListener('enter-vr', function () {
+				   elCursor.parentNode.removeChild(elCursor);
+				});
+			  }
+			});
+
+			// initialize alchemy
+			AFRAME.registerComponent('alchemy-initializer', {
+			  init: function () {
+				alchemyState.blockNumber = alchemy.core.getBlockNumber();
+			  }
+			});
+
+			// orchestrate speech
+			AFRAME.registerComponent('speech-orchestrator', {
+				schema: {
+					delay: {type: 'number'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const elSpeak = document.querySelector('.speak');
+
+					setTimeout(function() {
+						el.components.sound.playSound();
+						elSpeak.setAttribute('animation', {enabled: true});
+
+						el.addEventListener('sound-ended', function () {
+							el.addState('sound-ended');
+							elSpeak.setAttribute('animation', {enabled: false});
+						});
+					}, data.delay);
+				}
+			});
+
+			// track speech
+			AFRAME.registerComponent('speech-tracker', {
+				tick: function (time, timeDelta) {
+					const el = this.el;
+					const elSpeak = document.querySelector('.speak');
+
+					el.setAttribute('position', elSpeak.getAttribute('position'));
+				}
+			});
+
+			// clear scene
+			AFRAME.registerComponent('scene-clearer', {
+				schema: {
+					event: {type: 'string'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const sceneEl = this.el.sceneEl;
+
+					if (data.event) {
+						el.addEventListener(data.event, function() {
+							const els = sceneEl.querySelectorAll('.clear');
+							for (let i = 0; i < els.length; i++) {
+								sceneEl.removeChild(els[i]);
+							}
+						});
+					}
+				}
+			});
+			
+			// highlight model
+			AFRAME.registerComponent('model-highlighter', {
+				schema: {
+					scale: {type: 'number'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+
+					el.addEventListener('mouseenter', function () {
+						el.setAttribute('scale', {x: data.scale, y: data.scale, z: data.scale});
+					});
+
+					el.addEventListener('mouseleave', function () {
+						el.setAttribute('scale', {x: 1, y: 1, z: 1});
+					});
+				}
+			});
+
+			// select teleporter
+			AFRAME.registerComponent('teleporter-selector', {
+				schema: {
+					position: {type: 'vec3'},
+					rotation: {type: 'vec3'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					var elRig = document.querySelector('#rig');
+					
+					el.addEventListener('click', function () {
+						elRig.setAttribute('position', data.position);
+						elRig.setAttribute('rotation', data.rotation);
+					});
+				}
+			});
+
+			// select piggybank
+			AFRAME.registerComponent('piggybank-selector', {
+				init: function () {
+					const el = this.el;
+					const elSpeak = document.querySelector('.speak');
+					var elDudeBody = document.querySelector('#dudebody');
+					var elDudeStandingSpeech = document.querySelector('#dudestandingspeech');
+					var elDudeShruggingSpeech = document.querySelector('#dudeshruggingspeech');
+
+					el.addEventListener('click', function () {
+						const blockNumber = alchemy.core.getBlockNumber();
+						
+						if (blockNumber > alchemyState.blockNumber && elDudeStandingSpeech.is('sound-ended') && !elDudeShruggingSpeech.is('sound-ended')) {
+							elSpeak.setAttribute('animation', {enabled: true});
+							elDudeBody.setAttribute('animation-mixer', {clip: 'shrugging'});
+							elDudeShruggingSpeech.components.sound.playSound();
+
+							elDudeShruggingSpeech.addEventListener('sound-ended', function () {
+								elSpeak.setAttribute('animation', {enabled: false});
+								elDudeBody.setAttribute('animation-mixer', {clip: 'standing'});
+								elDudeShruggingSpeech.addState('sound-ended');
+							});
+						}
+					});
+				}
+			});
+		</script>
+
+		<a-scene renderer="colorManagement: true;" cursor-remover alchemy-initializer>
+			<a-assets>
+				<a-asset-item id="dudebody-gltf" src="assets/locotb_dudebody.gltf"></a-asset-item>
+				<a-asset-item id="dudehead-gltf" src="assets/locotb_dudehead.gltf"></a-asset-item>
+				<a-asset-item id="dudehat-gltf" src="assets/locotb_dudehat.gltf"></a-asset-item>
+				<a-asset-item id="teleporter-gltf" src="assets/locotb_teleporter.gltf"></a-asset-item>
+				<a-asset-item id="piggybank-gltf" src="assets/locotb_piggybank.gltf"></a-asset-item>
+				<a-asset-item id="stage-gltf" src="assets/locotb_stage.gltf"></a-asset-item>
+			</a-assets>
+
+			<a-entity
+			id="dudebody"
+			class="clear"
+			gltf-model="#dudebody-gltf"
+			rotation="0 90 0"
+			scale="2.9 2.9 2.9"
+			shadow="receive: false"
+			animation-mixer="clip: standing; loop: once;"
+			animation__escalate="property: position; from: -7.98 3 0; to: 0 0 0; dur: 20000; easing: linear;"></a-entity>
+
+			<a-entity 
+			id="dudehead"
+			class="speak clear"
+			gltf-model="#dudehead-gltf"
+			rotation="0 90 0"
+			shadow="receive: false"
+			gltf-morph__squash="morphtarget: Squash"
+			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400; enabled: false;"
+			animation__escalate="property: position; from: -8 4.415 0; to: 0 1.415 0; dur: 20000; easing: linear;"></a-entity>
+
+			<a-entity 
+			id="dudestandingspeech"
+			class="clear"
+			sound="src: url(assets/locotb_dudestanding.mp3)"
+			speech-orchestrator="delay: 4500"
+			speech-tracker></a-entity>
+
+			<a-entity 
+			id="dudeshruggingspeech"
+			class="clear"
+			position="0 1.415 0" 
+			sound="src: url(assets/locotb_dudeshrugging.mp3)"></a-entity>
+
+			<a-entity
+			id="dudehat"
+			class="clear"
+			gltf-model="#dudehat-gltf"
+			rotation="0 90 0"
+			shadow="receive: false"
+			animation__escalate="property: position; from: -8 4.56 0; to: 0 1.56 0; dur: 20000; easing: linear;"></a-entity>
+
+			<a-entity
+			id="teleporter1"
+			class="raycasterclick clear"
+			gltf-model="#teleporter-gltf"
+			position="-2 0 4"
+			model-highlighter="scale: 2"
+			teleporter-selector="position: -2 0 4; rotation: 0 0 0"></a-entity>
+
+			<a-entity
+			id="teleporter2"
+			class="raycasterclick clear"
+			gltf-model="#teleporter-gltf"
+			position="4 0 -2"
+			model-highlighter="scale: 2"
+			teleporter-selector="position: 4 0 -2; rotation: 0 135 0"></a-entity>
+
+			<a-entity
+			id="piggybank"
+			class="raycasterclick clear"
+			gltf-model="#piggybank-gltf"
+			position="-2.1 0 -1.6"
+			rotation="0 120 0"
+			shadow="receive: false"
+			model-highlighter="scale: 1.5"
+			piggybank-selector></a-entity>
+
+			<a-entity
+			id="stage"
+			gltf-model="#stage-gltf"
+			shadow="cast: false"></a-entity>
+
+			<a-entity 
+			id="track"
+			sound="src: url(assets/locotb_track.mp3); autoplay: true; positional: false; volume: 0.1;"
+			scene-clearer="event: sound-ended"></a-entity>
+
+			<a-entity id="rig" position="-2 0 4">
+				<a-entity id="camera" camera look-controls position="0 1.6 0">
+					<a-cursor id="cursor" raycaster="objects: .raycasterclick" material="color: red"></a-cursor>
+				</a-entity>
+				<a-entity laser-controls="hand: left" raycaster="objects: .raycasterclick; lineColor: red;"></a-entity>
+			</a-entity>
+
+			<a-entity light="type: ambient; intensity: 0.2;"></a-entity>
+			<a-entity light="type: point; castShadow: true; intensity: 0.3; distance: 50; decay: 2" position="2.8 1.82 -2.4"></a-entity>
+			<a-entity light="type: point; castShadow: true; intensity: 0.3; distance: 50; decay: 2" position="-1.7 1.7 0.3"></a-entity>
+
+			<a-sky id="sky" color="#19ABE5"></a-sky>
+		</a-scene>
+
+	</body>
+</html>
