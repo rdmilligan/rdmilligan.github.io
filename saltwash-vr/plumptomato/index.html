@@ -1,0 +1,353 @@
+<html>
+	<head>
+		<title>SaltwashVR</title>
+		
+		<script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+		<script src="https://rawcdn.githack.com/elbobo/aframe-gltf-morph-component/07e9b80bd382cc1c19223468d35c453e7c76e9a2/dist/aframe-gltf-morph-component.js"></script>
+		<script src="js/pt_alchemy.js"></script>
+	</head>
+	<body>
+
+		<script>
+			// remove cursor
+			AFRAME.registerComponent('cursor-remover', {
+			  init: function () {
+				var sceneEl = this.el
+				var elCursor = document.querySelector('#cursor');
+
+				sceneEl.addEventListener('enter-vr', function () {
+				   elCursor.parentNode.removeChild(elCursor);
+				});
+			  }
+			});
+
+			// clear scene
+			AFRAME.registerComponent('scene-clearer', {
+				schema: {
+					event: {type: 'string'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const sceneEl = this.el.sceneEl;
+
+					if (data.event) {
+						el.addEventListener(data.event, function() {
+							const els = sceneEl.querySelectorAll('.clear');
+							for (let i = 0; i < els.length; i++) {
+								sceneEl.removeChild(els[i]);
+							}
+						});
+					}
+				}
+			});
+			
+			// highlight model
+			AFRAME.registerComponent('model-highlighter', {
+				schema: {
+					scale: {type: 'number'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+
+					el.addEventListener('mouseenter', function () {
+						el.setAttribute('scale', {x: data.scale, y: data.scale, z: data.scale});
+					});
+
+					el.addEventListener('mouseleave', function () {
+						el.setAttribute('scale', {x: 1, y: 1, z: 1});
+					});
+				}
+			});
+
+			// select teleporter
+			AFRAME.registerComponent('teleporter-selector', {
+				schema: {
+					position: {type: 'vec3'},
+					rotation: {type: 'vec3'},
+					speech: {type: 'selector'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					var elRig = document.querySelector('#rig');
+							
+					el.addEventListener('click', function () {
+						elRig.setAttribute('position', data.position);
+						elRig.setAttribute('rotation', data.rotation);
+
+						if (!data.speech.is('sound-started')) {
+							data.speech.components.sound.playSound();
+							data.speech.addState('sound-started');
+						}
+					});
+				}
+			});
+
+			// select teleporter 3
+			AFRAME.registerComponent('teleporter3-selector', {
+				init: function () {
+					const el = this.el;
+					const elDudeHead = document.querySelector('#dudehead');
+					var elClient = document.querySelector('#client');
+					var elDudeStandingSpeech = document.querySelector('#dudestandingspeech');
+					var elClientSpeech = document.querySelector('#clientspeech');
+					var elRig = document.querySelector('#rig');
+					
+					el.addEventListener('click', function () {
+						elRig.setAttribute('position', {x: -2, y: 0, z: -1.3});
+						elRig.setAttribute('rotation', {x: 0, y: 135, z: 0});
+
+						if (!elDudeStandingSpeech.is('sound-ended')) {
+							elDudeHead.setAttribute('animation', {enabled: true});
+							elDudeStandingSpeech.components.sound.playSound();
+
+							elDudeStandingSpeech.addEventListener('sound-ended', function () {
+								elDudeHead.setAttribute('animation', {enabled: false});
+								elDudeStandingSpeech.addState('sound-ended');
+							});
+						}
+
+						if (!elClientSpeech.is('sound-started')) {
+							elClientSpeech.addState('sound-started');
+
+							setTimeout(function() {
+								elClient.setAttribute('animation-mixer', {clip: 'twitching'});
+								elClientSpeech.components.sound.playSound();
+
+								elClientSpeech.addEventListener('sound-ended', function () {
+									elClientSpeech.addState('sound-ended');
+								});
+							}, 14000);
+						}
+					});
+				}
+			});
+
+			// select chess piece
+			AFRAME.registerComponent('chesspiece-selector', {
+				schema: {
+					symbol: {type: 'selector'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const elDudeHead = document.querySelector('#dudehead');
+					var elDudeBody = document.querySelector('#dudebody');
+					var elClientSpeech = document.querySelector('#clientspeech');
+					var elDudeWipingSpeech = document.querySelector('#dudewipingspeech');
+
+					el.addEventListener('click', function () {
+						if (elClientSpeech.is('sound-ended')) {
+							const balance = alchemy.core.getBalance("0xE540Bc68141ace32D5F306Df4A80b028e64c728d");
+							const wei = parseInt(balance, 10);
+							const eth = wei / Math.pow(10, 18);
+
+							if (eth >= 0.2) {
+								el.parentNode.removeChild(el);
+								data.symbol.setAttribute('visible', true);
+								data.symbol.setAttribute('animation', {enabled: true});
+
+								if (!elDudeWipingSpeech.is('sound-ended')) {
+									elDudeHead.setAttribute('animation', {enabled: true});
+									elDudeBody.setAttribute('animation-mixer', { clip: 'wiping' });
+									elDudeWipingSpeech.components.sound.playSound();
+
+									elDudeWipingSpeech.addEventListener('sound-ended', function() {
+										elDudeHead.setAttribute('animation', {enabled: false});
+										elDudeWipingSpeech.addState('sound-ended');
+									});
+								}
+							}
+						}
+					});
+				}
+			});
+		</script>
+
+		<a-scene renderer="colorManagement: true;" cursor-remover>
+			<a-assets>
+				<a-asset-item id="dudebody-gltf" src="assets/pt_dudebody.gltf"></a-asset-item>
+				<a-asset-item id="dudehead-gltf" src="assets/pt_dudehead.gltf"></a-asset-item>
+				<a-asset-item id="client-gltf" src="assets/pt_client.gltf"></a-asset-item>
+				<a-asset-item id="man-gltf" src="assets/pt_man.gltf"></a-asset-item>
+				<a-asset-item id="woman-gltf" src="assets/pt_woman.gltf"></a-asset-item>
+				<a-asset-item id="teleporter-gltf" src="assets/pt_teleporter.gltf"></a-asset-item>
+				<a-asset-item id="rook-gltf" src="assets/pt_rook.gltf"></a-asset-item>
+				<a-asset-item id="pawn-gltf" src="assets/pt_pawn.gltf"></a-asset-item>
+				<a-asset-item id="symbol-gltf" src="assets/pt_symbol.gltf"></a-asset-item>
+				<a-asset-item id="stage-gltf" src="assets/pt_stage.gltf"></a-asset-item>
+			</a-assets>
+
+			<a-entity
+			id="dudebody"
+			class="clear"
+			gltf-model="#dudebody-gltf"
+			position="-3.8 0 -2.6"
+			rotation="0 50 0"
+			scale="2.9 2.9 2.9"
+			shadow="receive: false"
+			animation-mixer="clip: standing; loop: once;"></a-entity>
+
+			<a-entity 
+			id="dudehead"
+			class="clear"
+			gltf-model="#dudehead-gltf"
+			position="-3.79 1.415 -2.57"
+			rotation="0 57 0"
+			shadow="receive: false"
+			gltf-morph__squash="morphtarget: Squash"
+			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 310; enabled: false;"></a-entity>
+
+			<a-entity 
+			id="dudestandingspeech"
+			class="clear"
+			position="-3.79 1.415 -2.57" 
+			sound="src: url(assets/pt_dudestanding.mp3)"></a-entity>
+
+			<a-entity 
+			id="dudewipingspeech"
+			class="clear"
+			position="-3.79 1.415 -2.57" 
+			sound="src: url(assets/pt_dudewiping.mp3)"></a-entity>
+
+			<a-entity
+			id="client"
+			class="clear"
+			gltf-model="#client-gltf"
+			position="-4.45 0.245 -0.94"
+			rotation="180 -90 180"
+			shadow="receive: false"
+			animation-mixer="clip: sitting; loop: once;"></a-entity>
+
+			<a-entity 
+			id="clientspeech"
+			class="clear"
+			position="-4.45 1.14 -0.94" 
+			sound="src: url(assets/pt_client.mp3)"></a-entity>
+
+			<a-entity
+			id="man"
+			class="clear"
+			gltf-model="#man-gltf"
+			position="2 0 -2"
+			rotation="0 30 0"
+			shadow="receive: false"
+			gltf-morph__squash="morphtarget: Squash"
+			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400;"></a-entity>
+
+			<a-entity 
+			id="manspeech"
+			class="clear"
+			position="2 1.3 -2" 
+			sound="src: url(assets/pt_man.mp3); volume: 0.2;"></a-entity>
+
+			<a-entity
+			id="woman"
+			class="clear"
+			gltf-model="#woman-gltf"
+			position="-1 0 2.64"
+			rotation="0 40 0"
+			shadow="receive: false"
+			gltf-morph__squash="morphtarget: Squash"
+			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400;"></a-entity>
+
+			<a-entity 
+			id="womanspeech"
+			class="clear"
+			position="-1 1.3 2.64" 
+			sound="src: url(assets/pt_woman.mp3); volume: 0.2;"></a-entity>
+
+			<a-entity
+			id="teleporter1"
+			class="raycasterclick clear"
+			gltf-model="#teleporter-gltf"
+			position="0 0 4"
+			model-highlighter="scale: 2"
+			teleporter-selector="position: 0 0 4; rotation: 0 0 0; speech: #womanspeech;"></a-entity>
+
+			<a-entity
+			id="teleporter2"
+			class="raycasterclick clear"
+			gltf-model="#teleporter-gltf"
+			position="3.2 0 -1.3"
+			model-highlighter="scale: 2"
+			teleporter-selector="position: 3.2 0 -1.3; rotation: 0 135 0; speech: #manspeech;"></a-entity>
+
+			<a-entity
+			id="teleporter3"
+			class="raycasterclick clear"
+			gltf-model="#teleporter-gltf"
+			position="-2 0 -1.3"
+			model-highlighter="scale: 2"
+			teleporter3-selector></a-entity>
+
+			<a-entity
+			id="rook"
+			class="raycasterclick clear"
+			gltf-model="#rook-gltf"
+			position="-3.6 0.85 -0.4"
+			shadow="receive: false"
+			model-highlighter="scale: 1.5"
+			chesspiece-selector="symbol: #symbol1;"></a-entity>
+
+			<a-entity
+			id="pawn"
+			class="raycasterclick clear"
+			gltf-model="#pawn-gltf"
+			position="-3.6 0.85 -1.55"
+			shadow="receive: false"
+			model-highlighter="scale: 1.5"
+			chesspiece-selector="symbol: #symbol2;"></a-entity>
+
+			<a-entity
+			id="symbol1"
+			class="clear"
+			gltf-model="#symbol-gltf"
+			position="-3.6 0.85 -0.4"
+			rotation="0 120 0"
+			shadow="receive: false"
+			animation="property: position; to: -3.6 0.95 -0.4; loop: true; dir: alternate; dur: 2000; easing: linear; enabled: false;"
+			visible="false"></a-entity>
+
+			<a-entity
+			id="symbol2"
+			class="clear"
+			gltf-model="#symbol-gltf"
+			position="-3.6 0.85 -1.55"
+			rotation="0 60 0"
+			shadow="receive: false"
+			animation="property: position; to: -3.6 0.95 -1.55; dur: 2000; easing: linear; loop: true; dir: alternate; enabled: false;"
+			visible="false"></a-entity>
+
+			<a-entity
+			id="stage"
+			gltf-model="#stage-gltf"
+			shadow="cast: false"></a-entity>
+
+			<a-entity 
+			id="track"
+			sound="src: url(assets/pt_track.mp3); autoplay: true; positional: false; volume: 0.3;"
+			scene-clearer="event: sound-ended"></a-entity>
+
+			<a-entity id="rig" position="0 0 4">
+				<a-entity id="camera" camera look-controls position="0 1.6 0">
+					<a-cursor id="cursor" raycaster="objects: .raycasterclick" material="color: red"></a-cursor>
+				</a-entity>
+				<a-entity laser-controls="hand: left" raycaster="objects: .raycasterclick; lineColor: red;"></a-entity>
+			</a-entity>
+
+			<a-entity light="type: ambient; intensity: 0.1;"></a-entity>
+			<a-entity light="type: point; castShadow: true; intensity: 0.4; distance: 50; decay: 2" position="2 2 2.8"></a-entity>
+
+			<a-sky id="sky" color="#FFA500"></a-sky>
+		</a-scene>
+
+	</body>
+</html>
