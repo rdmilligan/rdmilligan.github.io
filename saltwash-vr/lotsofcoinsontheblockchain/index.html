@@ -133,18 +133,19 @@
 					var elDudeShruggingSpeech = document.querySelector('#dudeshruggingspeech');
 
 					el.addEventListener('click', function () {
-						const blockNumber = alchemy.core.getBlockNumber();
+						if (elDudeStandingSpeech.is('sound-ended') && !elDudeShruggingSpeech.is('sound-started')) {
+							const blockNumber = alchemy.core.getBlockNumber();
 						
-						if (blockNumber > alchemyState.blockNumber && elDudeStandingSpeech.is('sound-ended') && !elDudeShruggingSpeech.is('sound-ended')) {
-							elSpeak.setAttribute('animation', {enabled: true});
-							elDudeBody.setAttribute('animation-mixer', {clip: 'shrugging'});
-							elDudeShruggingSpeech.components.sound.playSound();
+							if (blockNumber > alchemyState.blockNumber) {
+								elSpeak.setAttribute('animation', {enabled: true});
+								elDudeBody.setAttribute('animation-mixer', {clip: 'shrugging'});
+								elDudeShruggingSpeech.components.sound.playSound();
+								elDudeShruggingSpeech.addState('sound-started');
 
-							elDudeShruggingSpeech.addEventListener('sound-ended', function () {
-								elSpeak.setAttribute('animation', {enabled: false});
-								elDudeBody.setAttribute('animation-mixer', {clip: 'standing'});
-								elDudeShruggingSpeech.addState('sound-ended');
-							});
+								elDudeShruggingSpeech.addEventListener('sound-ended', function () {
+									elSpeak.setAttribute('animation', {enabled: false});
+								});
+							}
 						}
 					});
 				}
