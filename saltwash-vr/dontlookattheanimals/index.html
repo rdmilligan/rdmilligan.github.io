@@ -56,7 +56,7 @@
 			// halt animation
 			AFRAME.registerComponent('animation-halter', {
 				init: function () {
-					var el = this.el;
+					const el = this.el;
 
 					el.addEventListener('mouseenter', function () {
 						el.setAttribute('animation-mixer', {loop: 'once'});

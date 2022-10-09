@@ -10,4 +10,4 @@ class Alchemy {
     }
 }
 
-var alchemy = new Alchemy();
+const alchemy = new Alchemy();

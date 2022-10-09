@@ -12,8 +12,8 @@
 			// remove cursor
 			AFRAME.registerComponent('cursor-remover', {
 			  init: function () {
-				var sceneEl = this.el
-				var elCursor = document.querySelector('#cursor');
+				const sceneEl = this.el
+				const elCursor = document.querySelector('#cursor');
 
 				sceneEl.addEventListener('enter-vr', function () {
 				   elCursor.parentNode.removeChild(elCursor);
@@ -69,14 +69,14 @@
 			// drink beer
 			AFRAME.registerComponent('beer-drinker', {
 				init: function () {
-					var el = this.el;
-					var elDudeBodyStanding = document.querySelector('#dudebodystanding');
-					var elDudeBodySitting = document.querySelector('#dudebodysitting');
-					var elDudeHead = document.querySelector('#dudehead');
-					var elDudeHat = document.querySelector('#dudehat');
-					var elDudeStandingSpeech = document.querySelector('#dudestandingspeech');
-					var elDudeSittingSpeech = document.querySelector('#dudesittingspeech');
-					var elSky = document.querySelector('#sky');
+					const el = this.el;
+					const elDudeBodyStanding = document.querySelector('#dudebodystanding');
+					const elDudeBodySitting = document.querySelector('#dudebodysitting');
+					const elDudeHead = document.querySelector('#dudehead');
+					const elDudeHat = document.querySelector('#dudehat');
+					const elDudeStandingSpeech = document.querySelector('#dudestandingspeech');
+					const elDudeSittingSpeech = document.querySelector('#dudesittingspeech');
+					const elSky = document.querySelector('#sky');
 
 					el.addEventListener('click', function () {
 						if (elDudeBodyStanding.getAttribute('visible') && elDudeStandingSpeech.is('sound-ended')) {
@@ -102,14 +102,14 @@
 			// drink wine
 			AFRAME.registerComponent('wine-drinker', {
 				init: function () {
-					var el = this.el;
-					var elDudeBodySitting = document.querySelector('#dudebodysitting');
-					var elDudeBodyLying = document.querySelector('#dudebodylying');
-					var elDudeHead = document.querySelector('#dudehead');
-					var elDudeHat = document.querySelector('#dudehat');
-					var elDudeSittingSpeech = document.querySelector('#dudesittingspeech');
-					var elDudeLyingSpeech = document.querySelector('#dudelyingspeech');
-					var elSky = document.querySelector('#sky');
+					const el = this.el;
+					const elDudeBodySitting = document.querySelector('#dudebodysitting');
+					const elDudeBodyLying = document.querySelector('#dudebodylying');
+					const elDudeHead = document.querySelector('#dudehead');
+					const elDudeHat = document.querySelector('#dudehat');
+					const elDudeSittingSpeech = document.querySelector('#dudesittingspeech');
+					const elDudeLyingSpeech = document.querySelector('#dudelyingspeech');
+					const elSky = document.querySelector('#sky');
 
 					el.addEventListener('click', function () {
 						if (elDudeBodySitting.getAttribute('visible') && elDudeSittingSpeech.is('sound-ended')) {

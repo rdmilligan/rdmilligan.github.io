@@ -12,8 +12,8 @@
 			// remove cursor
 			AFRAME.registerComponent('cursor-remover', {
 			  init: function () {
-				var sceneEl = this.el
-				var elCursor = document.querySelector('#cursor');
+				const sceneEl = this.el
+				const elCursor = document.querySelector('#cursor');
 
 				sceneEl.addEventListener('enter-vr', function () {
 				   elCursor.parentNode.removeChild(elCursor);
@@ -86,9 +86,9 @@
 				init: function () {
 					const el = this.el;
 					const elSpeak = document.querySelector('.speak');
-					var elDudeBody = document.querySelector('#dudebody');
-					var elDudeStandingSpeech = document.querySelector('#dudestandingspeech');
-					var elDudeKickingSpeech = document.querySelector('#dudekickingspeech');
+					const elDudeBody = document.querySelector('#dudebody');
+					const elDudeStandingSpeech = document.querySelector('#dudestandingspeech');
+					const elDudeKickingSpeech = document.querySelector('#dudekickingspeech');
 
 					el.addEventListener('click', function () {
 						if (elDudeBody.getAttribute('animation-mixer').clip == 'standing' && elDudeStandingSpeech.is('sound-ended') && !elDudeKickingSpeech.is('sound-ended')) {
@@ -111,9 +111,9 @@
 				init: function () {
 					const el = this.el;
 					const elSpeak = document.querySelector('.speak');
-					var elDudeBody = document.querySelector('#dudebody');
-					var elDudeStandingSpeech = document.querySelector('#dudestandingspeech');
-					var elDudePointingSpeech = document.querySelector('#dudepointingspeech');
+					const elDudeBody = document.querySelector('#dudebody');
+					const elDudeStandingSpeech = document.querySelector('#dudestandingspeech');
+					const elDudePointingSpeech = document.querySelector('#dudepointingspeech');
 
 					el.addEventListener('click', function () {
 						if (elDudeBody.getAttribute('animation-mixer').clip == 'standing' && elDudeStandingSpeech.is('sound-ended') && !elDudePointingSpeech.is('sound-ended')) {

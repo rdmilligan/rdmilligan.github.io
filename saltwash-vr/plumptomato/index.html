@@ -13,8 +13,8 @@
 			// remove cursor
 			AFRAME.registerComponent('cursor-remover', {
 			  init: function () {
-				var sceneEl = this.el
-				var elCursor = document.querySelector('#cursor');
+				const sceneEl = this.el
+				const elCursor = document.querySelector('#cursor');
 
 				sceneEl.addEventListener('enter-vr', function () {
 				   elCursor.parentNode.removeChild(elCursor);
@@ -75,7 +75,7 @@
 				init: function () {
 					const data = this.data;
 					const el = this.el;
-					var elRig = document.querySelector('#rig');
+					const elRig = document.querySelector('#rig');
 							
 					el.addEventListener('click', function () {
 						elRig.setAttribute('position', data.position);
@@ -94,10 +94,10 @@
 				init: function () {
 					const el = this.el;
 					const elDudeHead = document.querySelector('#dudehead');
-					var elClient = document.querySelector('#client');
-					var elDudeStandingSpeech = document.querySelector('#dudestandingspeech');
-					var elClientSpeech = document.querySelector('#clientspeech');
-					var elRig = document.querySelector('#rig');
+					const elClient = document.querySelector('#client');
+					const elDudeStandingSpeech = document.querySelector('#dudestandingspeech');
+					const elClientSpeech = document.querySelector('#clientspeech');
+					const elRig = document.querySelector('#rig');
 					
 					el.addEventListener('click', function () {
 						elRig.setAttribute('position', {x: -2, y: 0, z: -1.3});
@@ -139,9 +139,9 @@
 					const data = this.data;
 					const el = this.el;
 					const elDudeHead = document.querySelector('#dudehead');
-					var elDudeBody = document.querySelector('#dudebody');
-					var elClientSpeech = document.querySelector('#clientspeech');
-					var elDudeWipingSpeech = document.querySelector('#dudewipingspeech');
+					const elDudeBody = document.querySelector('#dudebody');
+					const elClientSpeech = document.querySelector('#clientspeech');
+					const elDudeWipingSpeech = document.querySelector('#dudewipingspeech');
 
 					el.addEventListener('click', function () {
 						if (elClientSpeech.is('sound-ended')) {

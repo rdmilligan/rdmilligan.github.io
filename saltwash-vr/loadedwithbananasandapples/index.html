@@ -12,8 +12,8 @@
 			// remove cursor
 			AFRAME.registerComponent('cursor-remover', {
 			  init: function () {
-				var sceneEl = this.el
-				var elCursor = document.querySelector('#cursor');
+				const sceneEl = this.el
+				const elCursor = document.querySelector('#cursor');
 
 				sceneEl.addEventListener('enter-vr', function () {
 				   elCursor.parentNode.removeChild(elCursor);
@@ -68,7 +68,7 @@
 
 				init: function () {
 					const data = this.data;
-					var el = this.el;
+					const el = this.el;
 
 					el.addEventListener('click', function () {
 						el.removeAttribute('animation'); 
@@ -126,7 +126,7 @@
 			class="raycasterclick clear"
 			gltf-model="#redapple-gltf"
 			shadow="receive: false"
-			animation="property: position; from: -8 1.05 -2.0; to: 52 1.05 -2.0; dur: 60000;"
+			animation="property: position; from: -8 1.05 -2; to: 52 1.05 -2; dur: 60000;"
 			fruit-selector="position: -1.7 0.45 -0.85; rotation: 0 0 0"></a-entity>
 
 			<a-entity
@@ -134,8 +134,8 @@
 			class="raycasterclick clear"
 			gltf-model="#greenapple-gltf"
 			shadow="receive: false"
-			animation="property: position; from: -19.8 1.05 -3.0; to: 40.2 1.05 -3.0; dur: 60000;"
-			fruit-selector="position: -2.0 0.45 -0.85; rotation: 0 0 0"></a-entity>
+			animation="property: position; from: -19.8 1.05 -3; to: 40.2 1.05 -3; dur: 60000;"
+			fruit-selector="position: -2 0.45 -0.85; rotation: 0 0 0"></a-entity>
 
 			<a-entity
 			id="apple3"

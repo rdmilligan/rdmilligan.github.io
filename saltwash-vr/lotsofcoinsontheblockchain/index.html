@@ -13,8 +13,8 @@
 			// remove cursor
 			AFRAME.registerComponent('cursor-remover', {
 			  init: function () {
-				var sceneEl = this.el
-				var elCursor = document.querySelector('#cursor');
+				const sceneEl = this.el
+				const elCursor = document.querySelector('#cursor');
 
 				sceneEl.addEventListener('enter-vr', function () {
 				   elCursor.parentNode.removeChild(elCursor);
@@ -114,7 +114,7 @@
 				init: function () {
 					const data = this.data;
 					const el = this.el;
-					var elRig = document.querySelector('#rig');
+					const elRig = document.querySelector('#rig');
 					
 					el.addEventListener('click', function () {
 						elRig.setAttribute('position', data.position);
@@ -128,9 +128,9 @@
 				init: function () {
 					const el = this.el;
 					const elSpeak = document.querySelector('.speak');
-					var elDudeBody = document.querySelector('#dudebody');
-					var elDudeStandingSpeech = document.querySelector('#dudestandingspeech');
-					var elDudeShruggingSpeech = document.querySelector('#dudeshruggingspeech');
+					const elDudeBody = document.querySelector('#dudebody');
+					const elDudeStandingSpeech = document.querySelector('#dudestandingspeech');
+					const elDudeShruggingSpeech = document.querySelector('#dudeshruggingspeech');
 
 					el.addEventListener('click', function () {
 						if (elDudeStandingSpeech.is('sound-ended') && !elDudeShruggingSpeech.is('sound-started')) {

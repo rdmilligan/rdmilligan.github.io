@@ -12,8 +12,8 @@
 			// remove cursor
 			AFRAME.registerComponent('cursor-remover', {
 			  init: function () {
-				var sceneEl = this.el
-				var elCursor = document.querySelector('#cursor');
+				const sceneEl = this.el
+				const elCursor = document.querySelector('#cursor');
 
 				sceneEl.addEventListener('enter-vr', function () {
 				   elCursor.parentNode.removeChild(elCursor);
@@ -85,7 +85,7 @@
 			AFRAME.registerComponent('teleporter1-selector', {
 				init: function () {
 					const el = this.el;
-					var elRig = document.querySelector('#rig');
+					const elRig = document.querySelector('#rig');
 					
 					el.addEventListener('click', function () {
 						elRig.setAttribute('position', {x: 0, y: 0, z: 2});
@@ -99,10 +99,10 @@
 				init: function () {
 					const el = this.el;
 					const elSpeak = document.querySelector('.speak');
-					var elSumoWrestler = document.querySelector('#sumowrestler');
-					var elDudeStandingSpeech = document.querySelector('#dudestandingspeech');
-					var elDudeSwipingSpeech = document.querySelector('#dudeswipingspeech');
-					var elRig = document.querySelector('#rig');
+					const elSumoWrestler = document.querySelector('#sumowrestler');
+					const elDudeStandingSpeech = document.querySelector('#dudestandingspeech');
+					const elDudeSwipingSpeech = document.querySelector('#dudeswipingspeech');
+					const elRig = document.querySelector('#rig');
 					
 					el.addEventListener('click', function () {
 						elRig.setAttribute('position', {x: -4.5, y: 0, z: -2});
@@ -128,10 +128,10 @@
 				init: function () {
 					const el = this.el;
 					const elSpeak = document.querySelector('.speak');
-					var elSumoWrestler = document.querySelector('#sumowrestler');
-					var elDudeStandingSpeech = document.querySelector('#dudestandingspeech');
-					var elDudeGrabbingSpeech = document.querySelector('#dudegrabbingspeech');
-					var elRig = document.querySelector('#rig');
+					const elSumoWrestler = document.querySelector('#sumowrestler');
+					const elDudeStandingSpeech = document.querySelector('#dudestandingspeech');
+					const elDudeGrabbingSpeech = document.querySelector('#dudegrabbingspeech');
+					const elRig = document.querySelector('#rig');
 					
 					el.addEventListener('click', function () {
 						elRig.setAttribute('position', {x: 4.5, y: 0, z: -2});

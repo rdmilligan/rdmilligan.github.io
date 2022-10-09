@@ -21,5 +21,5 @@ class AlchemyState {
     }
 }
 
-var alchemy = new Alchemy();
-var alchemyState = new AlchemyState();
+const alchemy = new Alchemy();
+const alchemyState = new AlchemyState();
