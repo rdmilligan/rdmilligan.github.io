@@ -104,9 +104,9 @@
 
 				tick: function (time, timeDelta) {
 					const el = this.el;
-					const elRig = document.querySelector('#rig');
 
 					if (el.is('teleporter-active')) {
+						const elRig = document.querySelector('#rig');
 						const elPosition = el.getAttribute('position');
 
 						elRig.setAttribute('position', {x: elPosition.x, y: elPosition.y, z: elPosition.z});
