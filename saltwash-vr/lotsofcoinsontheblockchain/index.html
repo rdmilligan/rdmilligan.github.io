@@ -56,9 +56,9 @@
 			AFRAME.registerComponent('speech-tracker', {
 				tick: function (time, timeDelta) {
 					const el = this.el;
-					const elSpeak = document.querySelector('.speak');
+					const elSpeakPosition = document.querySelector('.speak').getAttribute('position');
 
-					el.setAttribute('position', elSpeak.getAttribute('position'));
+					el.setAttribute('position', {x: elSpeakPosition.x, y: elSpeakPosition.y, z: elSpeakPosition.z});
 				}
 			});
 
