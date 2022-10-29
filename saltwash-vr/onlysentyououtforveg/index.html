@@ -1,0 +1,222 @@
+<html>
+	<head>
+		<title>SaltwashVR</title>
+		
+		<script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+		<script src="https://rawcdn.githack.com/elbobo/aframe-gltf-morph-component/07e9b80bd382cc1c19223468d35c453e7c76e9a2/dist/aframe-gltf-morph-component.js"></script>
+		<script src="js/osyofv_alchemy.js"></script>
+	</head>
+	<body>
+
+		<script>
+			// remove cursor
+			AFRAME.registerComponent('cursor-remover', {
+			  init: function () {
+				const sceneEl = this.el
+				const elCursor = document.querySelector('#cursor');
+
+				sceneEl.addEventListener('enter-vr', function () {
+				   elCursor.parentNode.removeChild(elCursor);
+				});
+			  }
+			});
+
+			// orchestrate sound
+			AFRAME.registerComponent('sound-orchestrator', {
+				schema: {
+					delay: {type: 'number'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+
+					setTimeout(function() {
+						el.components.sound.playSound();
+					}, data.delay);
+				}
+			});
+			
+			// clear scene
+			AFRAME.registerComponent('scene-clearer', {
+				schema: {
+					event: {type: 'string'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const sceneEl = this.el.sceneEl;
+
+					if (data.event) {
+						el.addEventListener(data.event, function() {
+							const els = sceneEl.querySelectorAll('.clear');
+							for (let i = 0; i < els.length; i++) {
+								sceneEl.removeChild(els[i]);
+							}
+						});
+					}
+				}
+			});
+
+			// shoot fruit
+			AFRAME.registerComponent('fruit-shooter', {
+				init: function () {
+					const el = this.el;
+					const sceneEl = this.el.sceneEl;
+					const elRig = document.querySelector('#rig');
+					const elCage = document.querySelector('#cage');
+					const elText = document.querySelector('#text');
+					let cageLaunched = false;
+
+					el.addEventListener('click', function () {
+						el.addState('shot');
+
+						let launchCage = true;
+						const els = sceneEl.querySelectorAll('[fruit-shooter]')
+						for (let i = 0; i < els.length; i++) {
+							if (els[i].is('shot')) continue;
+							launchCage = false;
+							break;
+						}
+
+						if (launchCage && !cageLaunched) {
+							const gasPrice = alchemy.core.getGasPrice();
+							const wei = parseInt(gasPrice, 10);
+
+							elRig.setAttribute('animation', 'property: position; to: 8 32 31; dur: 20000;');
+							elCage.setAttribute('animation', 'property: position; to: 8 32 31; dur: 20000;');
+							elText.setAttribute('animation', 'property: position; from: -1.8 1.5 0.6; to: 6.2 33.5 31.6; dur: 20000;');
+							elText.setAttribute('text', `value: Yes, I put some iffy tea leaves in the pot. Sniffing around my blockchain transactions, well, perhaps some magic atoms in the skull will keep those fingers mushy. The gas price is ${wei} wei. Time the city bet on sumo.; width: 1;`);
+							elText.setAttribute('text-printer', '');
+							cageLaunched = true;
+						}
+
+						const interval = setInterval(function() {
+							const scale = el.getAttribute('scale');
+							const reducedScale = scale.x - 0.05;
+							
+							if (reducedScale < 0.5) {
+								el.parentNode.removeChild(el);
+								clearInterval(interval);
+							}              
+
+							el.setAttribute('scale', {x: reducedScale, y: reducedScale, z: reducedScale});
+						}, 50);
+					});
+				}
+			});
+
+			// print text
+			AFRAME.registerComponent('text-printer', {
+				init: function () {
+					const el = this.el;
+					const textValue = el.getAttribute('text').value;
+					let textPosition = 0;
+
+					const interval = setInterval(function() {
+						if (textPosition === textValue.length) {
+							clearInterval(interval);
+						}              
+
+						textPosition++;
+						el.setAttribute('text', {value: textValue.substring(0, textPosition)});
+					}, 100);
+				}
+			});
+		</script>
+
+		<a-scene renderer="colorManagement: true;" cursor-remover>
+			<a-assets>
+				<a-asset-item id="dude-gltf" src="assets/osyofv_dude.gltf"></a-asset-item>
+				<a-asset-item id="redapple-gltf" src="assets/osyofv_redapple.gltf"></a-asset-item>
+				<a-asset-item id="greenapple-gltf" src="assets/osyofv_greenapple.gltf"></a-asset-item>
+				<a-asset-item id="banana-gltf" src="assets/osyofv_banana.gltf"></a-asset-item>
+				<a-asset-item id="cage-gltf" src="assets/osyofv_cage.gltf"></a-asset-item>
+				<a-asset-item id="stage-gltf" src="assets/osyofv_stage.gltf"></a-asset-item>
+			</a-assets>
+
+			<a-entity 
+			id="dude"
+			class="clear"
+			gltf-model="#dude-gltf"
+			position="0 -1.3 -2.5"
+			scale="2.9 2.9 2.9"
+			shadow="receive: false"
+			animation-mixer
+			animation__rotation="property: rotation; from: 0 -335 0; to: 0 25 0; loop: true; dur: 30000; easing: linear;"></a-entity>
+
+			<a-entity 
+			id="dudespeech" 
+			position="0 0.115 -2.5" 
+			sound="src: url(assets/osyofv_dude.mp3);" 
+			sound-orchestrator="delay: 3700;"></a-entity>
+
+			<a-entity
+			id="redapple"
+			class="raycasterclick clear"
+			gltf-model="#redapple-gltf"
+			shadow="receive: false"
+			gltf-morph__squash="morphtarget:Squash;"
+			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 1500;"
+			animation__position="property: position; from: -2.5 0 -5; to: -1.5 -0.5 -2.7; loop: true; dir: alternate; dur: 8000;"
+			animation__rotation="property: rotation; from: 0 0 0; to: 0 -360 0; loop: true; dur: 20000;"
+			fruit-shooter></a-entity>
+
+			<a-entity
+			id="greenapple"
+			class="raycasterclick clear"
+			gltf-model="#greenapple-gltf"
+			shadow="receive: false"
+			gltf-morph__squash="morphtarget:Squash;"
+			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 1500;"
+			animation__position="property: position; from: 1 -0.5 -5; to: 0 -1 -4; loop: true; dir: alternate; dur: 4000;"
+			animation__rotation="property: rotation; from: 0 0 0; to: 0 360 0; loop: true; dur: 12000;"
+			fruit-shooter></a-entity>
+
+			<a-entity
+			id="banana"
+			class="raycasterclick clear"
+			gltf-model="#banana-gltf"
+			shadow="receive: false"
+			gltf-morph__squash="morphtarget:Squash;"
+			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 1500;"
+			animation__position="property: position; from: 2 0.5 -5; to: 1.5 0 -3; loop: true; dir: alternate; dur: 5000;"
+			animation__rotation="property: rotation; from: 0 0 0; to: 0 -360 0; loop: true; dur: 8000; easing: linear;"
+			fruit-shooter></a-entity>
+
+			<a-entity
+			id="cage"
+			gltf-model="#cage-gltf"
+			shadow="cast: false"></a-entity>
+
+			<a-entity
+			id="text"
+			rotation="0 90 0"></a-entity>
+			 
+			<a-entity
+			id="stage"
+			gltf-model="#stage-gltf"
+			shadow="cast: false"></a-entity>
+
+			<a-entity 
+			id="track"
+			sound="src: url(assets/osyofv_track.mp3); autoplay: true; positional: false; volume: 0.3;"
+			scene-clearer="event: sound-ended"></a-entity>
+
+			<a-entity id="rig">
+				<a-entity id="camera" camera look-controls position="0 1.6 0">
+					<a-cursor id="cursor" raycaster="objects: .raycasterclick" material="color: red"></a-cursor>
+				</a-entity>
+				<a-entity laser-controls="hand: left" raycaster="objects: .raycasterclick; lineColor: red;"></a-entity>
+			</a-entity>
+
+			<a-entity light="type: ambient; intensity: 0.2;"></a-entity>
+			<a-entity light="type: directional; castShadow: true; intensity: 0.4;" position="1 2 2"></a-entity>
+
+			<a-sky id="sky" color="#351302"></a-sky>
+		</a-scene>
+
+	</body>
+</html>
