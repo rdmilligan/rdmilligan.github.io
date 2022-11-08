@@ -1,0 +1,156 @@
+<html>
+	<head>
+		<title>SaltwashVR</title>
+		
+		<script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+		<script src="https://rawcdn.githack.com/elbobo/aframe-gltf-morph-component/07e9b80bd382cc1c19223468d35c453e7c76e9a2/dist/aframe-gltf-morph-component.js"></script>
+	</head>
+	<body>
+
+		<script>
+			// orchestrate speech
+			AFRAME.registerComponent('speech-orchestrator', {
+				schema: {
+					delay: {type: 'number'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const elSpeak = document.querySelector('.speak');
+
+					setTimeout(function() {
+						el.components.sound.playSound();
+						elSpeak.setAttribute('animation', {enabled: true});
+
+						el.addEventListener('sound-ended', function () {
+							el.addState('sound-ended');
+							elSpeak.setAttribute('animation', {enabled: false});
+						});
+					}, data.delay);
+				}
+			});
+			
+			// clear scene
+			AFRAME.registerComponent('scene-clearer', {
+				schema: {
+					event: {type: 'string'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const sceneEl = this.el.sceneEl;
+
+					if (data.event) {
+						el.addEventListener(data.event, function() {
+							const els = sceneEl.querySelectorAll('.clear');
+							for (let i = 0; i < els.length; i++) {
+								sceneEl.removeChild(els[i]);
+							}
+						});
+					}
+				}
+			});
+		</script>
+
+		<a-scene renderer="colorManagement: true;">
+			<a-assets>
+				<a-asset-item id="dudebody-gltf" src="assets/tdm_dudebody.gltf"></a-asset-item>
+				<a-asset-item id="dudehead-gltf" src="assets/tdm_dudehead.gltf"></a-asset-item>
+				<a-asset-item id="bin-gltf" src="assets/tdm_bin.gltf"></a-asset-item>
+				<a-asset-item id="wheel-gltf" src="assets/tdm_wheel.gltf"></a-asset-item>
+				<a-asset-item id="rat-gltf" src="assets/tdm_rat.gltf"></a-asset-item>
+				<a-asset-item id="stage-gltf" src="assets/tdm_stage.gltf"></a-asset-item>
+			</a-assets>
+
+			<a-entity
+			id="dudebody"
+			class="clear"
+			gltf-model="#dudebody-gltf"
+			position="0.02 1 -0.02"
+			scale="2.9 2.9 2.9"
+			shadow="receive: false"
+			animation-mixer
+			animation="property: rotation; from: 0 -35 0; to: 0 1405 0; dur: 40000; easing: easeOutQuad;"></a-entity>
+
+			<a-entity 
+			id="dudehead"
+			class="speak clear"
+			gltf-model="#dudehead-gltf"
+			position="0 2.415 0"
+			shadow="receive: false"
+			gltf-morph__squash="morphtarget: Squash"
+			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400; enabled: false;"
+			animation__spin="property: rotation; from: 0 -35 0; to: 0 1405 0; dur: 40000; easing: easeOutQuad;"></a-entity>
+
+			<a-entity 
+			id="dudespeech" 
+			position="0 2.415 0" 
+			sound="src: url(assets/tdm_dude.mp3);" 
+			speech-orchestrator="delay: 5200;"></a-entity>
+
+			<a-entity
+			id="bin"
+			class="clear"
+			gltf-model="#bin-gltf"
+			position="0 0 -0.2"
+			shadow="receive: false"
+			animation="property: rotation; from: 0 -35 0; to: 0 1405 0; dur: 40000; easing: easeOutQuad;">
+				<a-entity
+				id="wheel1"
+				gltf-model="#wheel-gltf"
+				position="0.744 0 0.55"
+				animation="property: rotation; from: 0 -20 0; to: 0 7980 0; dur: 40000; easing: easeOutQuad;"></a-entity>
+
+				<a-entity
+				id="wheel2"
+				gltf-model="#wheel-gltf"
+				position="-0.751 0 0.55"
+				animation="property: rotation; from: 0 -40 0; to: 0 7960 0; dur: 40000; easing: easeOutQuad;"></a-entity>
+
+				<a-entity
+				id="wheel3"
+				gltf-model="#wheel-gltf"
+				position="0.744 0 -0.55"
+				animation="property: rotation; from: 0 20 0; to: 0 8020 0; dur: 40000; easing: easeOutQuad;"></a-entity>
+
+				<a-entity
+				id="wheel4"
+				gltf-model="#wheel-gltf"
+				position="-0.751 0 -0.55"
+				animation="property: rotation; from: 0 40 0; to: 0 8040 0; dur: 40000; easing: easeOutQuad;"></a-entity>
+			</a-entity>
+				
+			<a-entity 
+			id="rat"
+			class="clear"
+			gltf-model="#rat-gltf"
+			position="-2.5 0 -0.5"
+			rotation="0 155 0"
+			shadow="receive: false"
+			animation-mixer></a-entity>
+
+			<a-entity
+			id="stage"
+			gltf-model="#stage-gltf"
+			shadow="cast: false"></a-entity>
+
+			<a-entity 
+			id="track"
+			sound="src: url(assets/tdm_track.mp3); autoplay: true; positional: false; volume: 0.3;"
+			scene-clearer="event: sound-ended"></a-entity>
+
+			<a-entity id="rig" position="0 0 2.6">
+				<a-entity id="camera" camera look-controls position="0 1.6 0"></a-entity>
+			</a-entity>
+
+			<a-entity light="type: ambient; intensity: 0.2;"></a-entity>
+			<a-entity light="type: directional; castShadow: true; intensity: 0.4;" position="2 2 3.5"></a-entity>
+
+			<a-sky id="sky" color="#000"></a-sky>
+		</a-scene>
+
+	</body>
+</html>
