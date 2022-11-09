@@ -52,16 +52,6 @@
 				}
 			});
 
-			// track speech
-			AFRAME.registerComponent('speech-tracker', {
-				tick: function (time, timeDelta) {
-					const el = this.el;
-					const elSpeakPosition = document.querySelector('.speak').getAttribute('position');
-
-					el.setAttribute('position', {x: elSpeakPosition.x, y: elSpeakPosition.y, z: elSpeakPosition.z});
-				}
-			});
-
 			// clear scene
 			AFRAME.registerComponent('scene-clearer', {
 				schema: {
@@ -172,28 +162,27 @@
 			animation-mixer="clip: standing; loop: once;"
 			animation__escalate="property: position; from: -7.98 3 0; to: 0 0 0; dur: 20000; easing: linear;"></a-entity>
 
-			<a-entity 
-			id="dudehead"
-			class="speak clear"
-			gltf-model="#dudehead-gltf"
-			rotation="0 90 0"
-			shadow="receive: false"
-			gltf-morph__squash="morphtarget: Squash"
-			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400; enabled: false;"
-			animation__escalate="property: position; from: -8 4.415 0; to: 0 1.415 0; dur: 20000; easing: linear;"></a-entity>
+			<a-entity animation="property: position; from: -8 4.415 0; to: 0 1.415 0; dur: 20000; easing: linear;">
+				<a-entity 
+				id="dudehead"
+				class="speak clear"
+				gltf-model="#dudehead-gltf"
+				rotation="0 90 0"
+				shadow="receive: false"
+				gltf-morph__squash="morphtarget: Squash"
+				animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400; enabled: false;"></a-entity>
 
-			<a-entity 
-			id="dudestandingspeech"
-			class="clear"
-			sound="src: url(assets/locotb_dudestanding.mp3)"
-			speech-orchestrator="delay: 4500"
-			speech-tracker></a-entity>
+				<a-entity 
+				id="dudestandingspeech"
+				class="clear"
+				sound="src: url(assets/locotb_dudestanding.mp3)"
+				speech-orchestrator="delay: 4500"></a-entity>
 
-			<a-entity 
-			id="dudeshruggingspeech"
-			class="clear"
-			position="0 1.415 0" 
-			sound="src: url(assets/locotb_dudeshrugging.mp3)"></a-entity>
+				<a-entity 
+				id="dudeshruggingspeech"
+				class="clear"
+				sound="src: url(assets/locotb_dudeshrugging.mp3)"></a-entity>
+			</a-entity>
 
 			<a-entity
 			id="dudehat"

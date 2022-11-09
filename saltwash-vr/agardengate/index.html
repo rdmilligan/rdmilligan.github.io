@@ -44,16 +44,6 @@
 					}, data.delay);
 				}
 			});
-			
-			// track speech
-			AFRAME.registerComponent('speech-tracker', {
-				tick: function (time, timeDelta) {
-					const el = this.el;
-					const elSpeakPosition = document.querySelector('.speak').getAttribute('position');
-
-					el.setAttribute('position', {x: elSpeakPosition.x, y: elSpeakPosition.y, z: elSpeakPosition.z});
-				}
-			});
 
 			// clear scene
 			AFRAME.registerComponent('scene-clearer', {
@@ -96,6 +86,7 @@
 			AFRAME.registerComponent('teleporter1-selector', {
 				init: function () {
 					const el = this.el;
+					this.elRig = document.querySelector('#rig');
 
 					el.addEventListener('click', function () {
 						el.addState('teleporter-active');
@@ -106,7 +97,7 @@
 					const el = this.el;
 
 					if (el.is('teleporter-active')) {
-						const elRig = document.querySelector('#rig');
+						const elRig = this.elRig;
 						const elPosition = el.getAttribute('position');
 
 						elRig.setAttribute('position', {x: elPosition.x, y: elPosition.y, z: elPosition.z});
@@ -167,21 +158,21 @@
 			animation-mixer="loop: once;"
 			animation__train="property: position; from: 8.82 -11.8 -4.8; to: 8.82 -11.8 -24.8; dur: 40000; easing: linear;"></a-entity>
 
-			<a-entity 
-			id="dudehead"
-			class="speak clear"
-			gltf-model="#dudehead-gltf"
-			shadow="receive: false"
-			gltf-morph__squash="morphtarget: Squash"
-			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400; enabled: false;"
-			animation__train="property: position; from: 8.8 -10.385 -4.8; to: 8.8 -10.385 -24.8; dur: 40000; easing: linear;"></a-entity>
+			<a-entity animation="property: position; from: 8.8 -10.385 -4.8; to: 8.8 -10.385 -24.8; dur: 40000; easing: linear;">
+				<a-entity 
+				id="dudehead"
+				class="speak clear"
+				gltf-model="#dudehead-gltf"
+				shadow="receive: false"
+				gltf-morph__squash="morphtarget: Squash"
+				animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400; enabled: false;"></a-entity>
 
-			<a-entity 
-			id="dudespeech"
-			class="clear"
-			sound="src: url(assets/agg_dude.mp3)"
-			speech-orchestrator="delay: 4500"
-			speech-tracker></a-entity>
+				<a-entity 
+				id="dudespeech"
+				class="clear"
+				sound="src: url(assets/agg_dude.mp3)"
+				speech-orchestrator="delay: 4500"></a-entity>
+			</a-entity>
 
 			<a-entity
 			id="dudehat"
