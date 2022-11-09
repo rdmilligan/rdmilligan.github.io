@@ -158,10 +158,12 @@
 			animation-mixer="loop: once;"
 			animation__train="property: position; from: 8.82 -11.8 -4.8; to: 8.82 -11.8 -24.8; dur: 40000; easing: linear;"></a-entity>
 
-			<a-entity animation="property: position; from: 8.8 -10.385 -4.8; to: 8.8 -10.385 -24.8; dur: 40000; easing: linear;">
+			<a-entity 
+			class="clear"
+			animation="property: position; from: 8.8 -10.385 -4.8; to: 8.8 -10.385 -24.8; dur: 40000; easing: linear;">
 				<a-entity 
 				id="dudehead"
-				class="speak clear"
+				class="speak"
 				gltf-model="#dudehead-gltf"
 				shadow="receive: false"
 				gltf-morph__squash="morphtarget: Squash"
@@ -169,7 +171,6 @@
 
 				<a-entity 
 				id="dudespeech"
-				class="clear"
 				sound="src: url(assets/agg_dude.mp3)"
 				speech-orchestrator="delay: 4500"></a-entity>
 			</a-entity>
