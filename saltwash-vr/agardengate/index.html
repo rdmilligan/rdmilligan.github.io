@@ -159,16 +159,13 @@
 			animation__train="property: position; from: 8.82 -11.8 -4.8; to: 8.82 -11.8 -24.8; dur: 40000; easing: linear;"></a-entity>
 
 			<a-entity 
-			class="clear"
-			animation="property: position; from: 8.8 -10.385 -4.8; to: 8.8 -10.385 -24.8; dur: 40000; easing: linear;">
-				<a-entity 
-				id="dudehead"
-				class="speak"
-				gltf-model="#dudehead-gltf"
-				shadow="receive: false"
-				gltf-morph__squash="morphtarget: Squash"
-				animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400; enabled: false;"></a-entity>
-
+			id="dudehead"
+			class="speak clear"
+			gltf-model="#dudehead-gltf"
+			shadow="receive: false"
+			gltf-morph__squash="morphtarget: Squash"
+			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400; enabled: false;"
+			animation__train="property: position; from: 8.8 -10.385 -4.8; to: 8.8 -10.385 -24.8; dur: 40000; easing: linear;">
 				<a-entity 
 				id="dudespeech"
 				sound="src: url(assets/agg_dude.mp3)"

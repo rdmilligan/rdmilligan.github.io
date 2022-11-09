@@ -163,17 +163,14 @@
 			animation__escalate="property: position; from: -7.98 3 0; to: 0 0 0; dur: 20000; easing: linear;"></a-entity>
 
 			<a-entity 
-			class="clear"
-			animation="property: position; from: -8 4.415 0; to: 0 1.415 0; dur: 20000; easing: linear;">
-				<a-entity 
-				id="dudehead"
-				class="speak"
-				gltf-model="#dudehead-gltf"
-				rotation="0 90 0"
-				shadow="receive: false"
-				gltf-morph__squash="morphtarget: Squash"
-				animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400; enabled: false;"></a-entity>
-
+			id="dudehead"
+			class="speak clear"
+			gltf-model="#dudehead-gltf"
+			rotation="0 90 0"
+			shadow="receive: false"
+			gltf-morph__squash="morphtarget: Squash"
+			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400; enabled: false;"
+			animation__escalate="property: position; from: -8 4.415 0; to: 0 1.415 0; dur: 20000; easing: linear;">
 				<a-entity 
 				id="dudestandingspeech"
 				sound="src: url(assets/locotb_dudestanding.mp3)"
@@ -181,7 +178,7 @@
 
 				<a-entity 
 				id="dudeshruggingspeech"
-				sound="src: url(assets/locotb_dudeshrugging.mp3)"></a-entity>
+				sound="src: url(assets/locotb_dudeshrugging.mp3)"></a-entity> 
 			</a-entity>
 
 			<a-entity
