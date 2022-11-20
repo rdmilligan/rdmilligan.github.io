@@ -2,7 +2,7 @@
 // azure mock
 class Azure {
     getCommand() {
-        return fetch('../json/spihd_azure.json')
+        return fetch('json/spihd_azure.json')
         .then(response => response.json())
         .then(json => {return json.command;})
     }
