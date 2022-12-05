@@ -27,7 +27,7 @@
 			  init: function () {
 				const elDoors = document.querySelector('#doors');
 
-				azure.getCommand().then(washTime => {
+				azure.getWashTime().then(washTime => {
 					elDoors.setAttribute("washTime", washTime);
 				});
 			  }

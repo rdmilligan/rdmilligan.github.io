@@ -1,7 +1,7 @@
 ﻿
 // azure mock
 class Azure {
-    getCommand() {
+    getWashTime() {
         return fetch('json/las_azure.json')
         .then(response => response.json())
         .then(json => json.washTime)
