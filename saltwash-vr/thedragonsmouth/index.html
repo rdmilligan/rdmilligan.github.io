@@ -25,7 +25,6 @@
 						elSpeak.setAttribute('animation', {enabled: true});
 
 						el.addEventListener('sound-ended', function () {
-							el.addState('sound-ended');
 							elSpeak.setAttribute('animation', {enabled: false});
 						});
 					}, data.delay);

@@ -119,11 +119,10 @@
 					const elDudeBody = document.querySelector('#dudebody');
 					const elDudeHead = document.querySelector('#dudehead');
 					const elDudeHat = document.querySelector('#dudehat');
-					const elDoors = document.querySelector('#doors');
 
 					el.addEventListener('animationcomplete', function() {
 						elDude.parentNode.removeChild(elDude);
-						const washTime = elDoors.getAttribute("washTime");
+						const washTime = el.getAttribute("washTime");
 
 						setTimeout(function() {
 							el.setAttribute('animation', 'property: position; from: 0 0 0; to: 0 -10 0; dur: 10000; easing: linear;');

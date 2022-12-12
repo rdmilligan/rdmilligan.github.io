@@ -117,6 +117,8 @@
 							elClientSpeech.addState('sound-started');
 
 							setTimeout(function() {
+								if (!document.querySelector('#clientspeech')) return;
+							
 								elClient.setAttribute('animation-mixer', {clip: 'twitching'});
 								elClientSpeech.components.sound.playSound();
 

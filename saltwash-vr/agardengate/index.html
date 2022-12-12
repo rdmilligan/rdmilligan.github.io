@@ -38,7 +38,6 @@
 						elSpeak.setAttribute('animation', {enabled: true});
 
 						el.addEventListener('sound-ended', function () {
-							el.addState('sound-ended');
 							elSpeak.setAttribute('animation', {enabled: false});
 						});
 					}, data.delay);
@@ -128,6 +127,8 @@
 
 							if (transactionFrom === '0x4B631dA32DDBb757CAdf4b257E72daF6cCB21914') {
 								setTimeout(function() {
+									if (!document.querySelector('#clientspeech')) return;
+									
 									elClient.setAttribute('animation-mixer', {clip: 'twitching'});
 									elClientSpeech.components.sound.playSound();
 								}, 13000);
