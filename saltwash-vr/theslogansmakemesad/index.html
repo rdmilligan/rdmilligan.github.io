@@ -1,0 +1,170 @@
+<html>
+	<head>
+		<title>SaltwashVR</title>
+		
+		<script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+		<script src="https://rawcdn.githack.com/elbobo/aframe-gltf-morph-component/07e9b80bd382cc1c19223468d35c453e7c76e9a2/dist/aframe-gltf-morph-component.js"></script>
+	</head>
+	<body>
+
+		<script>
+			// orchestrate speech
+			AFRAME.registerComponent('speech-orchestrator', {
+				schema: {
+					delay: {type: 'number'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const elSpeaker = el.parentNode;
+
+					setTimeout(function() {
+						el.components.sound.playSound();
+						elSpeaker.setAttribute('animation', {enabled: true});
+
+						el.addEventListener('sound-ended', function () {
+							elSpeaker.setAttribute('animation', {enabled: false});
+						});
+					}, data.delay);
+				}
+			});
+
+			// clear scene
+			AFRAME.registerComponent('scene-clearer', {
+				schema: {
+					event: {type: 'string'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const sceneEl = this.el.sceneEl;
+
+					el.addEventListener(data.event, function() {
+						const els = sceneEl.querySelectorAll('.clear');
+						for (let i = 0; i < els.length; i++) {
+							sceneEl.removeChild(els[i]);
+						}
+					});
+				}
+			});
+		</script>
+
+		<a-scene renderer="colorManagement: true;">
+			<a-assets>
+				<a-asset-item id="dudebody-gltf" src="assets/tsmms_dudebody.gltf"></a-asset-item>
+				<a-asset-item id="dudehead-gltf" src="assets/tsmms_dudehead.gltf"></a-asset-item>
+				<a-asset-item id="dudehat-gltf" src="assets/tsmms_dudehat.gltf"></a-asset-item>
+				<a-asset-item id="jockey-gltf" src="assets/tsmms_jockey.gltf"></a-asset-item>
+				<a-asset-item id="camel-gltf" src="assets/tsmms_camel.gltf"></a-asset-item>
+				<a-asset-item id="tent-gltf" src="assets/tsmms_tent.gltf"></a-asset-item>
+				<a-asset-item id="tree-gltf" src="assets/tsmms_tree.gltf"></a-asset-item>
+				<a-asset-item id="litter-gltf" src="assets/tsmms_litter.gltf"></a-asset-item>
+				<a-asset-item id="ticket-gltf" src="assets/tsmms_ticket.gltf"></a-asset-item>
+				<a-asset-item id="stage-gltf" src="assets/tsmms_stage.gltf"></a-asset-item>
+			</a-assets>
+
+			<a-entity
+			id="dudebody"
+			class="clear"
+			gltf-model="#dudebody-gltf"
+			position="0.52 0 -0.02"
+			scale="2.9 2.9 2.9"
+			shadow="receive: false"
+			animation-mixer="timeScale: 0.2"></a-entity>
+
+			<a-entity 
+			id="dudehead"
+			class="clear"
+			gltf-model="#dudehead-gltf"
+			position="0.5 1.415 0"
+			shadow="receive: false"
+			gltf-morph__squash="morphtarget: Squash"
+			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400; enabled: false;">
+				<a-entity 
+				id="dudespeech"
+				sound="src: url(assets/tsmms_dude.mp3)"
+				speech-orchestrator="delay: 6000"></a-entity>
+			</a-entity>
+
+			<a-entity
+			id="dudehat"
+			class="clear"
+			gltf-model="#dudehat-gltf"
+			position="0.5 1.54 0.02"
+			rotation="-8.82 -0.61 -0.72"
+			shadow="receive: false"></a-entity>
+
+			<a-entity
+			id="jockey"
+			class="clear"
+			gltf-model="#jockey-gltf"
+			position="-2.79 1.77 -4"
+			rotation="0 60 0"
+			shadow="receive: false"
+			animation-mixer="timeScale: 1.5"></a-entity>
+
+			<a-entity
+			id="camel"
+			class="clear"
+			gltf-model="#camel-gltf"
+			position="-3 0 -4"
+			rotation="0 60 0"
+			shadow="receive: false"
+			animation-mixer="timeScale: 5"></a-entity>
+
+			<a-entity
+			id="tent"
+			class="clear"
+			gltf-model="#tent-gltf"
+			position="2.5 0 -3"
+			shadow="receive: false"></a-entity>
+
+			<a-entity
+			id="tree"
+			class="clear"
+			gltf-model="#tree-gltf"
+			position="-6 0 -1.4"
+			rotation="0 -8.5 0"
+			shadow="receive: false"></a-entity>
+
+			<a-entity
+			id="litter"
+			class="clear"
+			gltf-model="#litter-gltf"
+			shadow="receive: false"></a-entity>
+
+			<a-entity
+			id="ticket"
+			class="clear"
+			gltf-model="#ticket-gltf"
+			position="0.66 0.9 0.33"
+			rotation="-2.94 4.66 10.31"
+			shadow="receive: false"></a-entity>
+			
+			<a-entity
+			id="stage"
+			gltf-model="#stage-gltf"
+			shadow="cast: false"
+			animation="property: rotation; from: 0 0 0; to: 0 1000 0; dur: 42000; easing: linear;"
+			scene-clearer="event: animationcomplete;"></a-entity>
+
+			<a-entity 
+			id="track"
+			class="clear"
+			sound="src: url(assets/tsmms_track.mp3); autoplay: true; positional: false; volume: 0.3;"></a-entity>
+
+			<a-entity id="rig" position="0 0 2.6">
+				<a-entity id="camera" camera look-controls position="0 1.6 0"></a-entity>
+			</a-entity>
+
+			<a-entity light="type: ambient; intensity: 0.4;"></a-entity>
+			<a-entity light="type: directional; castShadow: true; intensity: 0.6;" position="2.5 2 4"></a-entity>
+
+			<a-sky id="sky" color="#19ABE5"></a-sky>
+		</a-scene>
+
+	</body>
+</html>
