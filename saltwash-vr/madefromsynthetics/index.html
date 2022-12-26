@@ -1,0 +1,278 @@
+<html>
+	<head>
+		<title>SaltwashVR</title>
+		
+		<script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+		<script src="https://rawcdn.githack.com/elbobo/aframe-gltf-morph-component/07e9b80bd382cc1c19223468d35c453e7c76e9a2/dist/aframe-gltf-morph-component.js"></script>
+		<script src="js/mfs_azure.js"></script>
+	</head>
+	<body>
+
+		<script>
+			// remove cursor
+			AFRAME.registerComponent('cursor-remover', {
+			  init: function () {
+				const sceneEl = this.el
+				const elCursor = document.querySelector('#cursor');
+
+				sceneEl.addEventListener('enter-vr', function () {
+				   elCursor.parentNode.removeChild(elCursor);
+				});
+			  }
+			});
+
+			// initialize azure
+			AFRAME.registerComponent('azure-initializer', {
+			  init: function () {
+				const elSecurityCamera = document.querySelector('#securitycamera');
+
+				azure.getSecurityCameraPositions().then(securityCameraPositions => {
+					elSecurityCamera.setAttribute("securityCameraPositions", securityCameraPositions);
+				});
+			  }
+			});
+
+			// orchestrate sound
+			AFRAME.registerComponent('sound-orchestrator', {
+				schema: {
+					delay: {type: 'number'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+
+					setTimeout(function() {
+						el.components.sound.playSound();
+					}, data.delay);
+				}
+			});
+
+			// clear scene
+			AFRAME.registerComponent('scene-clearer', {
+				schema: {
+					event: {type: 'string'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const sceneEl = this.el.sceneEl;
+
+					el.addEventListener(data.event, function() {
+						const els = sceneEl.querySelectorAll('.clear');
+						for (let i = 0; i < els.length; i++) {
+							sceneEl.removeChild(els[i]);
+						}
+					});
+				}
+			});
+
+			// highlight teleporter
+			AFRAME.registerComponent('teleporter-highlighter', {
+				init: function () {
+					const el = this.el;
+
+					el.addEventListener('mouseenter', function () {
+						el.setAttribute('scale', {x: 2, y: 2, z: 2});
+					});
+
+					el.addEventListener('mouseleave', function () {
+						el.setAttribute('scale', {x: 1, y: 1, z: 1});
+					});
+				}
+			});
+
+			// select teleporter
+			AFRAME.registerComponent('teleporter-selector', {
+				schema: {
+					rotation: {type: 'vec3'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const elPosition = el.getAttribute('position');
+					const elRig = document.querySelector('#rig');
+					const elDude = document.querySelector('#dude');
+					const elDudeSpeech1 = document.querySelector('#dudespeech1');
+					const elDudeSpeech2 = document.querySelector('#dudespeech2');
+
+					el.addEventListener('click', function () {
+						const elRigPosition = elRig.getAttribute('position');
+						const teleporterDistanceFromRig = elPosition.x - elRigPosition.x;
+
+						if (teleporterDistanceFromRig >= -2.5 && teleporterDistanceFromRig <= 2.5) {
+							elRig.setAttribute('position', {x: elPosition.x, y: elPosition.y, z: elPosition.z});
+							elRig.setAttribute('rotation', data.rotation);
+							elDude.setAttribute('position', {x: elPosition.x, y: 0, z: -1});
+							elDudeSpeech1.setAttribute('position', {x: elPosition.x, y: 1.415, z: -1});
+							elDudeSpeech2.setAttribute('position', {x: elPosition.x, y: 1.415, z: -1});
+						}
+					});
+				}
+			});
+
+			// link animation
+			AFRAME.registerComponent('animation-linker', {
+				init: function () {
+					const el = this.el;
+					const elDude = document.querySelector('#dude');
+
+					el.addEventListener('animationcomplete', function() {
+						const elPosition = el.getAttribute('position');
+						const elDudePosition = elDude.getAttribute('position');
+
+						if (elPosition.x === elDudePosition.x) {
+							const elDudeSpeech1 = document.querySelector('#dudespeech1');
+							const elDudeSpeech2 = document.querySelector('#dudespeech2');
+							const elSky = document.querySelector('#sky');
+
+							elDudeSpeech1.components.sound.stopSound();
+							elDudeSpeech2.components.sound.playSound();
+							elSky.setAttribute('color', '#CC0000');
+
+							setInterval(function() {
+								if (elSky.getAttribute('color') === '#CC0000') {
+									elSky.setAttribute('color', '#19ABE5');
+								}
+								else {
+									elSky.setAttribute('color', '#CC0000');
+								}
+							}, 1000);
+						}
+						else {
+							setTimeout(function() {
+								const securityCameraPositions = JSON.parse(el.getAttribute('securityCameraPositions'));
+								const nextSecurityCameraPosition = securityCameraPositions.shift(); 
+							
+								if (nextSecurityCameraPosition) {
+									el.setAttribute('animation', `property: position; from: ${elPosition.x} 5 -8; to: ${nextSecurityCameraPosition} 5 -8; dur: 4000; easing: linear;`);
+									el.setAttribute('securityCameraPositions', JSON.stringify(securityCameraPositions));
+								}
+							}, 1000);
+						}
+					});
+				}
+			});
+		</script>
+
+		<a-scene renderer="colorManagement: true;" cursor-remover azure-initializer>
+			<a-assets>
+				<a-asset-item id="dude-gltf" src="assets/mfs_dude.gltf"></a-asset-item>
+				<a-asset-item id="client-gltf" src="assets/mfs_client.gltf"></a-asset-item>
+				<a-asset-item id="man1-gltf" src="assets/mfs_man1.gltf"></a-asset-item>
+				<a-asset-item id="man2-gltf" src="assets/mfs_man2.gltf"></a-asset-item>
+				<a-asset-item id="teleporter-gltf" src="assets/mfs_teleporter.gltf"></a-asset-item>
+				<a-asset-item id="securitycamera-gltf" src="assets/mfs_securitycamera.gltf"></a-asset-item>
+				<a-asset-item id="stage-gltf" src="assets/mfs_stage.gltf"></a-asset-item>
+			</a-assets>
+
+			<a-entity 
+			id="dude"
+			class="clear"
+			gltf-model="#dude-gltf"
+			position="0 0 -1"
+			rotation="0 180 0"
+			scale="2.9 2.9 2.9"
+			shadow="receive: false"
+			animation-mixer></a-entity>
+
+			<a-entity 
+			id="dudespeech1"
+			class="clear"
+			position="0 1.415 -1"
+			sound="src: url(assets/mfs_dude1.mp3);" 
+			sound-orchestrator="delay: 6500;"></a-entity>
+
+			<a-entity 
+			id="dudespeech2"
+			class="clear"
+			position="0 1.415 -1"
+			sound="src: url(assets/mfs_dude2.mp3);"></a-entity>
+
+			<a-entity
+			id="client"
+			class="clear"
+			gltf-model="#client-gltf"
+			position="-1.09 0.42 -5.51"
+			rotation="0 90 0"
+			shadow="receive: false"
+			animation-mixer></a-entity>
+
+			<a-entity
+			id="man1"
+			class="clear"
+			gltf-model="#man1-gltf"
+			position="1.78 0 -5.74"
+			rotation="0 -57 0"
+			shadow="receive: false"
+			animation-mixer></a-entity>
+
+			<a-entity
+			id="man2"
+			class="clear"
+			gltf-model="#man2-gltf"
+			position="0.91 0 -6.67"
+			rotation="0 -36 0"
+			shadow="receive: false"
+			animation-mixer></a-entity>
+
+			<a-entity
+			id="teleporter1"
+			class="raycasterclick clear"
+			gltf-model="#teleporter-gltf"
+			position="2.5 0 0.25"
+			teleporter-highlighter
+			teleporter-selector="rotation: 0 55 0"></a-entity>
+
+			<a-entity
+			id="teleporter2"
+			class="raycasterclick clear"
+			gltf-model="#teleporter-gltf"
+			position="0 0 0.25"
+			teleporter-highlighter
+			teleporter-selector="rotation: 0 0 0"></a-entity>
+
+			<a-entity
+			id="teleporter3"
+			class="raycasterclick clear"
+			gltf-model="#teleporter-gltf"
+			position="-2.5 0 0.25"
+			teleporter-highlighter
+			teleporter-selector="rotation: 0 -55 0"></a-entity>
+
+			<a-entity
+			id="securitycamera"
+			gltf-model="#securitycamera-gltf"
+			shadow="receive: false"
+			animation="property: position; from: -2.5 0 -12; to: -2.5 5 -8; dur: 10000; easing: linear;"
+			animation-linker></a-entity>
+
+			<a-entity
+			id="stage"
+			gltf-model="#stage-gltf"
+			shadow="cast: false"></a-entity>
+
+			<a-entity 
+			id="track"
+			sound="src: url(assets/mfs_track.mp3); autoplay: true; positional: false; volume: 0.3;"
+			scene-clearer="event: sound-ended"></a-entity>
+
+			<a-entity id="rig" position="0 0 3">
+				<a-entity id="camera" camera look-controls position="0 1.6 0">
+					<a-cursor id="cursor" raycaster="objects: .raycasterclick" material="color: red"></a-cursor>
+				</a-entity>
+				<a-entity laser-controls="hand: left" raycaster="objects: .raycasterclick; lineColor: red;"></a-entity>
+			</a-entity>
+
+			<a-entity light="type: ambient; intensity: 0.1;"></a-entity>
+			<a-entity light="type: point; castShadow: true; intensity: 0.4; distance: 50; decay: 2" position="-3 2.5 2"></a-entity>
+			<a-entity light="type: point; castShadow: true; intensity: 0.4; distance: 50; decay: 2" position="3 2.5 2"></a-entity>
+
+			<a-sky id="sky" color="#19ABE5"></a-sky>
+		</a-scene>
+
+	</body>
+</html>
