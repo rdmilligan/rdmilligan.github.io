@@ -1,0 +1,230 @@
+<html>
+	<head>
+		<title>SaltwashVR</title>
+		
+		<script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+		<script src="https://rawcdn.githack.com/elbobo/aframe-gltf-morph-component/07e9b80bd382cc1c19223468d35c453e7c76e9a2/dist/aframe-gltf-morph-component.js"></script>
+	</head>
+	<body>
+
+		<script>
+			// remove cursor
+			AFRAME.registerComponent('cursor-remover', {
+			  init: function () {
+				const sceneEl = this.el
+				const elCursor = document.querySelector('#cursor');
+
+				sceneEl.addEventListener('enter-vr', function () {
+				   elCursor.parentNode.removeChild(elCursor);
+				});
+			  }
+			});
+
+			// orchestrate speech
+			AFRAME.registerComponent('speech-orchestrator', {
+				schema: {
+					delay: {type: 'number'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const elSpeaker = el.parentNode;
+
+					elSpeaker.addState('speaker-active');
+
+					setTimeout(function() {
+						el.components.sound.playSound();
+						elSpeaker.setAttribute('animation', {enabled: true});
+
+						el.addEventListener('sound-ended', function () {
+							elSpeaker.setAttribute('animation', {enabled: false});
+							elSpeaker.removeState('speaker-active');
+						});
+					}, data.delay);
+				}
+			});
+
+			// orchestrate sound
+			AFRAME.registerComponent('sound-orchestrator', {
+				schema: {
+					delay: {type: 'number'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+
+					setTimeout(function() {
+						el.components.sound.playSound();
+					}, data.delay);
+				}
+			});
+
+			// clear scene
+			AFRAME.registerComponent('scene-clearer', {
+				schema: {
+					event: {type: 'string'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const sceneEl = this.el.sceneEl;
+
+					el.addEventListener(data.event, function() {
+						const els = sceneEl.querySelectorAll('.clear');
+						for (let i = 0; i < els.length; i++) {
+							sceneEl.removeChild(els[i]);
+						}
+					});
+				}
+			});
+
+			// highlight model
+			AFRAME.registerComponent('model-highlighter', {
+				init: function () {
+					const el = this.el;
+
+					el.addEventListener('mouseenter', function () {
+						el.setAttribute('scale', {x: 1.5, y: 1.5, z: 1.5});
+					});
+
+					el.addEventListener('mouseleave', function () {
+						el.setAttribute('scale', {x: 1, y: 1, z: 1});
+					});
+				}
+			});
+
+			// select saw part
+			AFRAME.registerComponent('sawpart-selector', {
+				schema: {
+					xPosition: {type: 'number'},
+					speech: {type: 'selector'}
+				},
+		  
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const elDudeHead = document.querySelector('#dudehead');
+
+					el.addEventListener('click', function () {
+						if (!elDudeHead.is('speaker-active')) {
+							el.setAttribute('position', {x: data.xPosition, y: 2, z: 0});
+							el.classList.remove('raycasterclick');
+							data.speech.components.sound.playSound();
+							elDudeHead.setAttribute('animation', {enabled: true});
+							elDudeHead.addState('speaker-active');
+
+							data.speech.addEventListener('sound-ended', function () {
+								elDudeHead.setAttribute('animation', {enabled: false});
+								elDudeHead.removeState('speaker-active');
+							});
+						}
+					});
+				}
+			});
+		</script>
+
+		<a-scene renderer="colorManagement: true;" cursor-remover>
+			<a-assets>
+				<a-asset-item id="dudebody-gltf" src="assets/lmihwc_dudebody.gltf"></a-asset-item>
+				<a-asset-item id="dudehead-gltf" src="assets/lmihwc_dudehead.gltf"></a-asset-item>
+				<a-asset-item id="dudehat-gltf" src="assets/lmihwc_dudehat.gltf"></a-asset-item>
+				<a-asset-item id="rope-gltf" src="assets/lmihwc_rope.gltf"></a-asset-item>
+				<a-asset-item id="bottle-gltf" src="assets/lmihwc_bottle.gltf"></a-asset-item>
+				<a-asset-item id="pipe-gltf" src="assets/lmihwc_pipe.gltf"></a-asset-item>
+				<a-asset-item id="stage-gltf" src="assets/lmihwc_stage.gltf"></a-asset-item>
+			</a-assets>
+
+			<a-entity
+			id="dudebody"
+			class="clear"
+			gltf-model="#dudebody-gltf"
+			position="0.02 0 -0.02"
+			scale="2.9 2.9 2.9"
+			shadow="receive: false"
+			animation-mixer="timeScale: 0.3"></a-entity>
+
+			<a-entity 
+			id="dudehead"
+			class="clear"
+			gltf-model="#dudehead-gltf"
+			position="0 1.415 0"
+			shadow="receive: false"
+			gltf-morph__squash="morphtarget: Squash"
+			animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400; enabled: false;">
+				<a-entity 
+				id="dudespeech"
+				sound="src: url(assets/lmihwc_dude.mp3)"
+				speech-orchestrator="delay: 5000"></a-entity>
+				<a-entity 
+				id="duderopespeech"
+				sound="src: url(assets/lmihwc_duderope.mp3)"></a-entity>
+				<a-entity 
+				id="dudebottlespeech"
+				sound="src: url(assets/lmihwc_dudebottle.mp3)"></a-entity>
+				<a-entity 
+				id="dudepipespeech"
+				sound="src: url(assets/lmihwc_dudepipe.mp3)"></a-entity>
+			</a-entity>
+
+			<a-entity
+			id="dudehat"
+			class="clear"
+			gltf-model="#dudehat-gltf"
+			position="0 1.54 0.02"
+			rotation="-8.82 -0.61 -0.72"
+			shadow="receive: false"></a-entity>
+
+			<a-entity
+			id="rope"
+			class="raycasterclick clear"
+			gltf-model="#rope-gltf"
+			position="-0.4 0 -0.6"
+			model-highlighter
+			sawpart-selector="xPosition: 0; speech: #duderopespeech;"></a-entity>
+
+			<a-entity
+			id="bottle"
+			class="raycasterclick clear"
+			gltf-model="#bottle-gltf"
+			position="-1 0 0.3"
+			model-highlighter
+			sawpart-selector="xPosition: -0.7; speech: #dudebottlespeech;"></a-entity>
+
+			<a-entity
+			id="pipe"
+			class="raycasterclick clear"
+			gltf-model="#pipe-gltf"
+			position="1 0 0.1"
+			model-highlighter
+			sawpart-selector="xPosition: 0.7; speech: #dudepipespeech;"></a-entity>
+
+			<a-entity
+			id="stage"
+			gltf-model="#stage-gltf"
+			shadow="cast: false"></a-entity>
+
+			<a-entity 
+			id="track"
+			sound="src: url(assets/lmihwc_track.mp3); positional: false; volume: 0.3;"
+			sound-orchestrator="delay: 4200;"
+			scene-clearer="event: sound-ended"></a-entity>
+
+			<a-entity id="rig" position="0 0 2.5">
+				<a-entity id="camera" camera look-controls position="0 1.6 0">
+					<a-cursor id="cursor" raycaster="objects: .raycasterclick" material="color: red"></a-cursor>
+				</a-entity>
+				<a-entity laser-controls="hand: left" raycaster="objects: .raycasterclick; lineColor: red;"></a-entity>
+			</a-entity>
+
+			<a-entity light="type: ambient; intensity: 0.1;"></a-entity>
+			<a-entity light="type: point; castShadow: true; intensity: 0.4; distance: 50; decay: 2" position="-1 2 3"></a-entity>
+
+			<a-sky id="sky" color="#19ABE5"></a-sky>
+		</a-scene>
+
+	</body>
+</html>
