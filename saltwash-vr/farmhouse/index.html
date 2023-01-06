@@ -1,0 +1,228 @@
+<html>
+	<head>
+		<title>SaltwashVR</title>
+		
+		<script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+		<script src="https://rawcdn.githack.com/elbobo/aframe-gltf-morph-component/07e9b80bd382cc1c19223468d35c453e7c76e9a2/dist/aframe-gltf-morph-component.js"></script>
+	</head>
+	<body>
+
+		<script>
+			// remove cursor
+			AFRAME.registerComponent('cursor-remover', {
+			  init: function () {
+				const sceneEl = this.el
+				const elCursor = document.querySelector('#cursor');
+
+				sceneEl.addEventListener('enter-vr', function () {
+				   elCursor.parentNode.removeChild(elCursor);
+				});
+			  }
+			});
+
+			// orchestrate sound
+			AFRAME.registerComponent('sound-orchestrator', {
+				schema: {
+					delay: {type: 'number'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+
+					setTimeout(function() {
+						el.components.sound.playSound();
+					}, data.delay);
+				}
+			});
+
+			// clear scene
+			AFRAME.registerComponent('scene-clearer', {
+				schema: {
+					event: {type: 'string'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const sceneEl = this.el.sceneEl;
+
+					el.addEventListener(data.event, function() {
+						const els = sceneEl.querySelectorAll('.clear');
+						for (let i = 0; i < els.length; i++) {
+							sceneEl.removeChild(els[i]);
+						}
+					});
+				}
+			});
+
+			// sense spotlight
+			AFRAME.registerComponent('spotlight-sensor', {
+				init: function () {
+					const elScroller = document.querySelector('#scroller');
+					const elSpotlight1 = document.querySelector('#spotlight1');
+					const elSpotlight2 = document.querySelector('#spotlight2');
+					const elSpotlight3 = document.querySelector('#spotlight3');
+					const elSpotlight4 = document.querySelector('#spotlight4');
+					const elText = document.querySelector('#text');
+
+					setInterval(function() {
+						const elScrollerPositionX = elScroller.getAttribute('position').x
+
+						if (!elSpotlight1.is('shot') && (elScrollerPositionX > 10 && elScrollerPositionX < 20) ||
+						!elSpotlight2.is('shot') && (elScrollerPositionX > 25 && elScrollerPositionX < 35) ||
+						!elSpotlight3.is('shot') && (elScrollerPositionX > 35 && elScrollerPositionX < 45) ||
+						!elSpotlight4.is('shot') && (elScrollerPositionX > 45 && elScrollerPositionX < 55)) {
+							const adjustedDetection = parseInt(elText.getAttribute('detection')) + 5;
+
+							if (adjustedDetection === 100) {
+								elText.setAttribute('text', { color: 'red' });
+							} else {
+								elText.setAttribute('detection', adjustedDetection);
+							}
+
+							elText.setAttribute('text', { value: `Detection: ${adjustedDetection}%` });
+						}
+
+					}, 500);
+				}
+			});
+
+			// shoot spotlight
+			AFRAME.registerComponent('spotlight-shooter', {
+				schema: {
+					spot: {type: 'selector'}
+				},
+		  
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+
+					el.addEventListener('click', function () {
+						el.addState('shot');
+						el.setAttribute('rotation', {x: 0, y: 180, z: 0});
+						data.spot.setAttribute('rotation', {x: 0, y: 0, z: 0});
+					});
+				}
+			});
+		</script>
+
+		<a-scene renderer="colorManagement: true;" cursor-remover spotlight-sensor>
+			<a-assets>
+				<a-asset-item id="dude-gltf" src="assets/f_dude.gltf"></a-asset-item>
+				<a-asset-item id="trees-gltf" src="assets/f_trees.gltf"></a-asset-item>
+				<a-asset-item id="spotlight-gltf" src="assets/f_spotlight.gltf"></a-asset-item>
+				<a-asset-item id="stage-gltf" src="assets/f_stage.gltf"></a-asset-item>
+			</a-assets>
+
+			<a-entity 
+			id="dude"
+			class="clear"
+			gltf-model="#dude-gltf"
+			rotation="0 90 0"
+			scale="2.9 2.9 2.9"
+			shadow="receive: false"
+			animation-mixer></a-entity>
+
+			<a-entity 
+			id="dudespeech" 
+			position="0 1.415 0" 
+			sound="src: url(assets/f_dude.mp3);" 
+			sound-orchestrator="delay: 3400;"></a-entity>
+
+			<a-entity
+			id="text"
+			class="clear"
+			text="value: Detection: 0%"
+			detection="0"
+			position="0 1.4 1.6"></a-entity>
+
+			<a-entity 
+			id="scroller"
+			animation="property: position; from: 0 0 0; to: 60 0 0; dur: 78000; easing: linear">
+				<a-entity
+				id="trees"
+				class="raycasterclick"
+				gltf-model="#trees-gltf"
+				shadow="cast: false"></a-entity>
+
+				<a-entity
+				id="stage"
+				gltf-model="#stage-gltf"
+				shadow="cast: false"></a-entity>
+
+				<a-entity
+				id="spot1"
+				light="type: spot; castShadow: true; color: #FF0000; intensity: 0.8; distance: 50; decay: 1.2; angle: 15" 
+				position="-15 5 -25" 
+				rotation="0 180 0"></a-entity>
+
+				<a-entity
+				id="spotlight1"
+				class="raycasterclick"
+				gltf-model="#spotlight-gltf"
+				position="-15 5 -25"
+				spotlight-shooter="spot: #spot1"></a-entity>
+
+				<a-entity
+				id="spot2"
+				light="type: spot; castShadow: true; color: #FF0000; intensity: 0.8; distance: 50; decay: 1.2; angle: 15" 
+				position="-30 5 -25" 
+				rotation="0 180 0"></a-entity>
+
+				<a-entity
+				id="spotlight2"
+				class="raycasterclick"
+				gltf-model="#spotlight-gltf"
+				position="-30 5 -25"
+				spotlight-shooter="spot: #spot2"></a-entity>
+
+				<a-entity
+				id="spot3"
+				light="type: spot; castShadow: true; color: #FF0000; intensity: 0.8; distance: 50; decay: 1.2; angle: 15" 
+				position="-40 5 -25" 
+				rotation="0 180 0"></a-entity>
+
+				<a-entity
+				id="spotlight3"
+				class="raycasterclick"
+				gltf-model="#spotlight-gltf"
+				position="-40 5 -25"
+				spotlight-shooter="spot: #spot3"></a-entity>
+
+				<a-entity
+				id="spot4"
+				light="type: spot; castShadow: true; color: #FF0000; intensity: 0.8; distance: 50; decay: 1.2; angle: 15" 
+				position="-50 5 -25" 
+				rotation="0 180 0"></a-entity>
+
+				<a-entity
+				id="spotlight4"
+				class="raycasterclick"
+				gltf-model="#spotlight-gltf"
+				position="-50 5 -25"
+				spotlight-shooter="spot: #spot4"></a-entity>
+			</a-entity>
+
+			<a-entity 
+			id="track"
+			sound="src: url(assets/f_track.mp3); positional: false; volume: 0.2;"
+			sound-orchestrator="delay: 3000;"
+			scene-clearer="event: sound-ended"></a-entity>
+
+			<a-entity id="rig" position="0 0 2.5">
+				<a-entity id="camera" camera look-controls position="0 1.6 0">
+					<a-cursor id="cursor" raycaster="objects: .raycasterclick" material="color: red"></a-cursor>
+				</a-entity>
+				<a-entity laser-controls="hand: left" raycaster="objects: .raycasterclick; lineColor: red;"></a-entity>
+			</a-entity>
+
+			<a-entity light="type: ambient; intensity: 0.1;"></a-entity>
+			<a-entity light="type: directional; castShadow: true; intensity: 0.1;" position="-3.5 3 5"></a-entity>
+
+			<a-sky id="sky" color="#1D0E14"></a-sky>
+		</a-scene>
+
+	</body>
+</html>
