@@ -1,0 +1,325 @@
+<html>
+	<head>
+		<title>SaltwashVR</title>
+		
+		<script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+		<script src="https://unpkg.com/aframe-event-set-component@5.0.0/dist/aframe-event-set-component.min.js"></script> 
+	</head>
+	<body>
+
+		<script>
+			// remove cursor
+			AFRAME.registerComponent('cursor-remover', {
+			  init: function () {
+				const sceneEl = this.el
+				const elCursor = document.querySelector('#cursor');
+
+				sceneEl.addEventListener('enter-vr', function () {
+				   elCursor.parentNode.removeChild(elCursor);
+				});
+			  }
+			});
+
+			// orchestrate sound
+			AFRAME.registerComponent('sound-orchestrator', {
+				schema: {
+					delay: {type: 'number'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+
+					setTimeout(function() {
+						el.components.sound.playSound();
+					}, data.delay);
+				}
+			});
+
+			// clear scene
+			AFRAME.registerComponent('scene-clearer', {
+				schema: {
+					event: {type: 'string'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const sceneEl = this.el.sceneEl;
+
+					el.addEventListener(data.event, function() {
+						const els = sceneEl.querySelectorAll('.clear');
+						for (let i = 0; i < els.length; i++) {
+							sceneEl.removeChild(els[i]);
+						}
+					});
+				}
+			});
+
+			// shoot balloon
+			AFRAME.registerComponent('balloon-shooter', {
+				schema: {
+					target: {type: 'selector'}
+				},
+				
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+
+					el.addEventListener('click', function () {
+						const elPosition = el.getAttribute('position');
+
+						el.parentNode.removeChild(el);
+						data.target.setAttribute('visible', true);
+						data.target.setAttribute('position', {x: elPosition.x, y: elPosition.y, z: elPosition.z});
+					});
+				}
+			});
+		</script>
+
+		<a-scene renderer="colorManagement: true;" cursor-remover>
+			<a-assets>
+				<a-asset-item id="dude-gltf" src="assets/ss_dude.gltf"></a-asset-item>
+				<a-asset-item id="stalk1-gltf" src="assets/ss_stalk1.gltf"></a-asset-item>
+				<a-asset-item id="petals1-gltf" src="assets/ss_petals1.gltf"></a-asset-item>
+				<a-asset-item id="stalk2-gltf" src="assets/ss_stalk2.gltf"></a-asset-item>
+				<a-asset-item id="petals2-gltf" src="assets/ss_petals2.gltf"></a-asset-item>
+				<a-asset-item id="stalk3-gltf" src="assets/ss_stalk3.gltf"></a-asset-item>
+				<a-asset-item id="petals3-gltf" src="assets/ss_petals3.gltf"></a-asset-item>
+				<a-asset-item id="stalk4-gltf" src="assets/ss_stalk4.gltf"></a-asset-item>
+				<a-asset-item id="petals4-gltf" src="assets/ss_petals4.gltf"></a-asset-item>
+				<a-asset-item id="stalk5-gltf" src="assets/ss_stalk5.gltf"></a-asset-item>
+				<a-asset-item id="petals5-gltf" src="assets/ss_petals5.gltf"></a-asset-item>
+				<a-asset-item id="stalk6-gltf" src="assets/ss_stalk6.gltf"></a-asset-item>
+				<a-asset-item id="petals6-gltf" src="assets/ss_petals6.gltf"></a-asset-item>
+				<a-asset-item id="balloon1-gltf" src="assets/ss_balloon1.gltf"></a-asset-item>
+				<a-asset-item id="balloon2-gltf" src="assets/ss_balloon2.gltf"></a-asset-item>
+				<a-asset-item id="balloon3-gltf" src="assets/ss_balloon3.gltf"></a-asset-item>
+				<a-asset-item id="balloon4-gltf" src="assets/ss_balloon4.gltf"></a-asset-item>
+				<a-asset-item id="balloon5-gltf" src="assets/ss_balloon5.gltf"></a-asset-item>
+				<a-asset-item id="letters1-gltf" src="assets/ss_letters1.gltf"></a-asset-item>
+				<a-asset-item id="letters2-gltf" src="assets/ss_letters2.gltf"></a-asset-item>
+				<a-asset-item id="letters3-gltf" src="assets/ss_letters3.gltf"></a-asset-item>
+				<a-asset-item id="letters4-gltf" src="assets/ss_letters4.gltf"></a-asset-item>
+				<a-asset-item id="letters5-gltf" src="assets/ss_letters5.gltf"></a-asset-item>
+				<a-asset-item id="carousel-gltf" src="assets/ss_carousel.gltf"></a-asset-item>
+				<a-asset-item id="stage-gltf" src="assets/ss_stage.gltf"></a-asset-item>
+			</a-assets>
+
+			<a-entity 
+			id="dude"
+			class="clear"
+			gltf-model="#dude-gltf"
+			scale="2.9 2.9 2.9"
+			shadow="receive: false"
+			animation-mixer="timeScale: 1.5"></a-entity>
+
+			<a-entity
+			id="stalk1"
+			class="clear"
+			gltf-model="#stalk1-gltf"
+			scale="0 0 0"
+			shadow="cast: false"
+			animation__grow="property: scale; from: 0 0 0; to: 1 1 1; delay: 8000; dur: 1000; easing: linear;"></a-entity>
+
+			<a-entity
+			id="petals1"
+			class="clear"
+			gltf-model="#petals1-gltf"
+			shadow="cast: false"
+			animation__grow="property: position; from: 0 20 0; to: 0 0 0; delay: 8000; dur: 1500; easing: easeOutQuart;"
+			event-set__animationbegin="visible: true"
+			visible="false"></a-entity>
+
+			<a-entity
+			id="stalk2"
+			class="clear"
+			gltf-model="#stalk2-gltf"
+			scale="0 0 0"
+			shadow="cast: false"
+			animation__grow="property: scale; from: 0 0 0; to: 1 1 1; delay: 10500; dur: 1000; easing: linear;"></a-entity>
+
+			<a-entity
+			id="petals2"
+			class="clear"
+			gltf-model="#petals2-gltf"
+			shadow="cast: false"
+			animation__grow="property: position; from: 0 20 0; to: 0 0 0; delay: 10500; dur: 1500; easing: easeOutQuart;"
+			event-set__animationbegin="visible: true"
+			visible="false"></a-entity>
+
+			<a-entity
+			id="stalk3"
+			class="clear"
+			gltf-model="#stalk3-gltf"
+			scale="0 0 0"
+			shadow="cast: false"
+			animation__grow="property: scale; from: 0 0 0; to: 1 1 1; delay: 13000; dur: 1000; easing: linear;"></a-entity>
+
+			<a-entity
+			id="petals3"
+			class="clear"
+			gltf-model="#petals3-gltf"
+			shadow="cast: false"
+			animation__grow="property: position; from: 0 20 0; to: 0 0 0; delay: 13000; dur: 1500; easing: easeOutQuart;"
+			event-set__animationbegin="visible: true"
+			visible="false"></a-entity>
+
+			<a-entity
+			id="carousel"
+			class="clear"
+			gltf-model="#carousel-gltf"
+			animation="property: rotation; from: 0 0 0; to: 0 -3600 0; delay: 22000; dur: 40000; easing: linear;">
+				<a-entity
+				id="stalk4"
+				gltf-model="#stalk4-gltf"
+				shadow="cast: false"
+				scale="0 0 0"
+				animation__grow="property: scale; from: 0 0 0; to: 1 1 1; delay: 15500; dur: 1000; easing: linear;"></a-entity>
+
+				<a-entity
+				id="petals4"
+				gltf-model="#petals4-gltf"
+				shadow="cast: false"
+				animation__grow="property: position; from: 0 20 0; to: 0 0 0; delay: 15500; dur: 1500; easing: easeOutQuart;"
+				event-set__animationbegin="visible: true"
+				visible="false"></a-entity>
+
+				<a-entity
+				id="stalk5"
+				gltf-model="#stalk5-gltf"
+				scale="0 0 0"
+				shadow="cast: false"
+				animation__grow="property: scale; from: 0 0 0; to: 1 1 1; delay: 17500; dur: 1000; easing: linear;"></a-entity>
+		  
+				<a-entity
+				id="petals5"
+				gltf-model="#petals5-gltf"
+				shadow="cast: false"
+				animation__grow="property: position; from: 0 20 0; to: 0 0 0; delay: 17500; dur: 1500; easing: easeOutQuart;"
+				event-set__animationbegin="visible: true"
+				visible="false"></a-entity>
+
+				<a-entity
+				id="stalk6"
+				gltf-model="#stalk6-gltf"
+				scale="0 0 0"
+				shadow="cast: false"
+				animation__grow="property: scale; from: 0 0 0; to: 1 1 1; delay: 19500; dur: 1000; easing: linear;"></a-entity>
+
+				<a-entity
+				id="petals6"
+				gltf-model="#petals6-gltf"
+				shadow="cast: false"
+				animation__grow="property: position; from: 0 20 0; to: 0 0 0; delay: 19500; dur: 1500; easing: easeOutQuart;"
+				event-set__animationbegin="visible: true"
+				visible="false"></a-entity>
+			</a-entity>
+
+			<a-entity
+			id="balloon1"
+			class="raycasterclick"
+			gltf-model="#balloon1-gltf"
+			animation="property: position; from: -2 12 -4; to: -2 0 -4; delay: 20000; dur: 18000; easing: linear;"
+			event-set__animationbegin="visible: true"
+			event-set__animationcomplete="visible: false"
+			visible="false"
+			balloon-shooter="target: #word1"></a-entity>
+
+			<a-entity
+			id="balloon2"
+			class="raycasterclick"
+			gltf-model="#balloon2-gltf"
+			animation="property: position; from: -1 12 -7; to: -1 0 -5.5; delay: 26000; dur: 18000; easing: linear;"
+			event-set__animationbegin="visible: true"
+			event-set__animationcomplete="visible: false"
+			visible="false"
+			balloon-shooter="target: #word2"></a-entity>
+
+			<a-entity
+			id="balloon3"
+			class="raycasterclick"
+			gltf-model="#balloon3-gltf"
+			animation="property: position; from: 0 12 -5.5; to: 0 0 -7; delay: 28000; dur: 18000; easing: linear;"
+			event-set__animationbegin="visible: true"
+			event-set__animationcomplete="visible: false"
+			visible="false"
+			balloon-shooter="target: #word3"></a-entity>
+
+			<a-entity
+			id="balloon4"
+			class="raycasterclick"
+			gltf-model="#balloon4-gltf"
+			animation="property: position; from: 1 12 -8; to: 1 0 -8; delay: 22000; dur: 18000; easing: linear;"
+			event-set__animationbegin="visible: true"
+			event-set__animationcomplete="visible: false"
+			visible="false"
+			balloon-shooter="target: #word4"></a-entity>
+
+			<a-entity
+			id="balloon5"
+			class="raycasterclick"
+			gltf-model="#balloon5-gltf"
+			animation="property: position; from: 2 12 -3.5; to: 2 0 -3.5; delay: 24000; dur: 18000; easing: linear;"
+			event-set__animationbegin="visible: true"
+			event-set__animationcomplete="visible: false"
+			visible="false"
+			balloon-shooter="target: #word5"></a-entity>
+
+			<a-entity
+			id="letters1"
+			class="clear"
+			gltf-model="#letters1-gltf"
+			visible="false"></a-entity>
+
+			<a-entity
+			id="letters2"
+			class="clear"
+			gltf-model="#letters2-gltf"
+			visible="false"></a-entity>
+
+			<a-entity
+			id="letters3"
+			class="clear"
+			gltf-model="#letters3-gltf"
+			visible="false"></a-entity>
+
+			<a-entity
+			id="letters4"
+			class="clear"
+			gltf-model="#letters4-gltf"
+			visible="false"></a-entity>
+
+			<a-entity
+			id="letters5"
+			class="clear"
+			gltf-model="#letters5-gltf"
+			visible="false"></a-entity>
+
+			<a-entity
+			id="stage"
+			gltf-model="#stage-gltf"></a-entity>
+
+			<a-entity 
+			id="track"
+			sound="src: url(assets/ss_track.mp3); positional: false; volume: 0.15;"
+			sound-orchestrator="delay: 3600;"
+			scene-clearer="event: sound-ended"></a-entity>
+
+			<a-entity id="rig" position="0 0 2.6">
+				<a-entity id="camera" camera look-controls position="0 1.6 0">
+					<a-cursor id="cursor" raycaster="objects: .raycasterclick" material="color: red"></a-cursor>
+				</a-entity>
+				<a-entity laser-controls="hand: left" raycaster="objects: .raycasterclick; lineColor: red;"></a-entity>
+			</a-entity>
+
+			<a-entity light="type: ambient; intensity: 0.1;"></a-entity>
+			<a-entity light="type: point; castShadow: true; color: #FFFF00; intensity: 0.4; distance: 50; decay: 2" position="-1 2 3"></a-entity>
+			<a-entity light="type: point; castShadow: true; color: #FF0000; intensity: 0.4; distance: 50; decay: 2" position="1.5 3 2"></a-entity>
+
+			<a-sky id="sky" color="#DBDBDB"></a-sky>
+		</a-scene>
+
+	</body>
+</html>
