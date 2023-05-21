@@ -1,0 +1,373 @@
+<html>
+	<head>
+		<title>SaltwashVR</title>
+		
+		<script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+		<script src="https://rawcdn.githack.com/elbobo/aframe-gltf-morph-component/07e9b80bd382cc1c19223468d35c453e7c76e9a2/dist/aframe-gltf-morph-component.js"></script>
+	</head>
+	<body>
+
+		<script>
+			// remove cursor
+			AFRAME.registerComponent('cursor-remover', {
+			  init: function () {
+				const sceneEl = this.el
+				const elCursor = document.querySelector('#cursor');
+
+				sceneEl.addEventListener('enter-vr', function () {
+				   elCursor.parentNode.removeChild(elCursor);
+				});
+			  }
+			});
+
+			// orchestrate sound
+			AFRAME.registerComponent('sound-orchestrator', {
+				schema: {
+					delay: {type: 'number'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+
+					setTimeout(function() {
+						el.components.sound.playSound();
+					}, data.delay);
+				}
+			});
+
+			// orchestrate head
+			AFRAME.registerComponent('head-orchestrator', {
+				schema: {
+					delay: {type: 'number'},
+					duration: {type: 'number'},
+					nextTarget: {type: 'selector'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+
+					setTimeout(function() {
+						el.setAttribute('animation', {enabled: true});
+
+						setTimeout(function() {
+							el.setAttribute('animation', {enabled: false});
+
+							if (data.nextTarget) {
+								el.setAttribute('visible', false);
+								data.nextTarget.setAttribute('visible', true);
+							}
+						}, data.duration);
+					}, data.delay);
+				}
+			});
+
+			// clear scene
+			AFRAME.registerComponent('scene-clearer', {
+				schema: {
+					event: {type: 'string'}
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const sceneEl = this.el.sceneEl;
+
+					el.addEventListener(data.event, function() {
+						const els = sceneEl.querySelectorAll('.clear');
+						for (let i = 0; i < els.length; i++) {
+							sceneEl.removeChild(els[i]);
+						}
+					});
+				}
+			});
+
+			// highlight teleporter
+			AFRAME.registerComponent('teleporter-highlighter', {
+				init: function () {
+					const el = this.el;
+
+					el.addEventListener('mouseenter', function () {
+						el.setAttribute('scale', {x: 2, y: 2, z: 2});
+					});
+
+					el.addEventListener('mouseleave', function () {
+						el.setAttribute('scale', {x: 1, y: 1, z: 1});
+					});
+				}
+			});
+
+			// select teleporter
+			AFRAME.registerComponent('teleporter-selector', {
+				schema: {
+					rotation: {type: 'vec3'},
+					textTarget: {type: 'selector'},
+				},
+
+				init: function () {
+					const data = this.data;
+					const el = this.el;
+					const elPosition = el.getAttribute('position');
+					const elRig = document.querySelector('#rig');
+					const elText = document.querySelector('#text');
+
+					el.addEventListener('click', function () {
+						elRig.setAttribute('position', {x: elPosition.x, y: elPosition.y, z: elPosition.z});
+						elRig.setAttribute('rotation', data.rotation);
+
+						if (data.textTarget && !data.textTarget.getAttribute('text-printer')) {
+							data.textTarget.setAttribute('text-printer', '');
+						}
+					});
+				}
+			});
+
+			// print text
+			AFRAME.registerComponent('text-printer', {
+				init: function () {
+					const el = this.el;
+					const textValue = el.getAttribute('text').value;
+					let textPosition = 0;
+
+					const interval = setInterval(function() {
+						if (textPosition === textValue.length) {
+							clearInterval(interval);
+						}              
+
+						textPosition++;
+						el.setAttribute('text', {value: textValue.substring(0, textPosition)});
+						el.setAttribute('visible', true);
+					}, 100);
+				}
+			});
+		</script>
+
+		<a-scene renderer="colorManagement: true;" cursor-remover>
+			<a-assets>
+				<a-asset-item id="dudebody-gltf" src="assets/oyr_dudebody.gltf"></a-asset-item>
+				<a-asset-item id="dudehead-gltf" src="assets/oyr_dudehead.gltf"></a-asset-item>
+				<a-asset-item id="dudehat-gltf" src="assets/oyr_dudehat.gltf"></a-asset-item>
+				<a-asset-item id="sumowrestler1-gltf" src="assets/oyr_sumowrestler1.gltf"></a-asset-item>
+				<a-asset-item id="sumowrestler2-gltf" src="assets/oyr_sumowrestler2.gltf"></a-asset-item>
+				<a-asset-item id="sumowrestler3-gltf" src="assets/oyr_sumowrestler3.gltf"></a-asset-item>
+				<a-asset-item id="waitress-gltf" src="assets/oyr_waitress.gltf"></a-asset-item>
+				<a-asset-item id="chef-gltf" src="assets/oyr_chef.gltf"></a-asset-item>
+				<a-asset-item id="teleporter-gltf" src="assets/oyr_teleporter.gltf"></a-asset-item>
+				<a-asset-item id="stage-gltf" src="assets/oyr_stage.gltf"></a-asset-item>
+			</a-assets>
+
+			<a-entity
+			id="dudebody"
+			class="clear"
+			gltf-model="#dudebody-gltf"
+			position="0.939 0.257 0"
+			rotation="0 -50 0"
+			scale="2.9 2.9 2.9"
+			shadow="receive: false"
+			animation-mixer="timeScale: 2"></a-entity>
+
+			<a-entity 
+			id="dudehead"
+			class="clear"
+			position="0.909 1.439 0"
+			rotation="0.669, -53.8, -0.917"
+			shadow="receive: false">
+				<a-entity
+				id="dudespeech"
+				sound="src: url(assets/oyr_dude.mp3)"
+				sound-orchestrator="delay: 22000"></a-entity>
+
+				<a-entity 
+				id="dudehead1"
+				gltf-model="#dudehead-gltf"
+				gltf-morph__squash="morphtarget: Squash1"
+				animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400; enabled: false;"
+				head-orchestrator="delay: 22000; duration: 8000; nextTarget: #dudehead2;"></a-entity>
+
+				<a-entity 
+				id="dudehead2"
+				gltf-model="#dudehead-gltf"
+				gltf-morph__squash="morphtarget: Squash2"
+				animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400; enabled: false;"
+				head-orchestrator="delay: 30000; duration: 4000; nextTarget: #dudehead3"
+				visible="false"></a-entity>
+
+				<a-entity 
+				id="dudehead3"
+				gltf-model="#dudehead-gltf"
+				gltf-morph__squash="morphtarget: Squash4"
+				animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400; enabled: false;"
+				head-orchestrator="delay: 34000; duration: 8000; nextTarget: #dudehead4;"
+				visible="false"></a-entity>
+
+				<a-entity 
+				id="dudehead4"
+				gltf-model="#dudehead-gltf"
+				gltf-morph__squash="morphtarget: Squash3"
+				animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400; enabled: false;"
+				head-orchestrator="delay: 42000; duration: 4000; nextTarget: #dudehead5;"
+				visible="false"></a-entity>
+
+				<a-entity 
+				id="dudehead5"
+				gltf-model="#dudehead-gltf"
+				gltf-morph__squash="morphtarget: Squash4"
+				animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400; enabled: false;"
+				head-orchestrator="delay: 46000; duration: 8000; nextTarget: #dudehead6;"
+				visible="false"></a-entity>
+
+				<a-entity 
+				id="dudehead6"
+				gltf-model="#dudehead-gltf"
+				gltf-morph__squash="morphtarget: Squash1"
+				animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400; enabled: false;"
+				head-orchestrator="delay: 54000; duration: 4000; nextTarget: #dudehead7"
+				visible="false"></a-entity>
+
+				<a-entity 
+				id="dudehead7"
+				gltf-model="#dudehead-gltf"
+				gltf-morph__squash="morphtarget: Squash3"
+				animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400; enabled: false;"
+				head-orchestrator="delay: 60000; duration: 4000; nextTarget: #dudehead8;"
+				visible="false"></a-entity>
+
+				<a-entity 
+				id="dudehead8"
+				gltf-model="#dudehead-gltf"
+				gltf-morph__squash="morphtarget: Squash4"
+				animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400; enabled: false;"
+				head-orchestrator="delay: 64000; duration: 4000; nextTarget: #dudehead9;"
+				visible="false"></a-entity>
+
+				<a-entity 
+				id="dudehead9"
+				gltf-model="#dudehead-gltf"
+				gltf-morph__squash="morphtarget: Squash1"
+				animation="property: gltf-morph__squash.value; from: 0; to: 1; loop: true; dir: alternate; dur: 400; enabled: false;"
+				head-orchestrator="delay: 68000; duration: 16500;"
+				visible="false"></a-entity>
+			</a-entity>
+
+			<a-entity
+			id="dudehat"
+			class="clear"
+			gltf-model="#dudehat-gltf"
+			position="0.892 1.547 0.029"
+			rotation="-11.982, -46.3, -10.36"
+			shadow="receive: false"></a-entity>
+
+			<a-entity
+			id="sumowrestler1"
+			class="clear"
+			gltf-model="#sumowrestler1-gltf"
+			position="-1.069 0.76 -0.475"
+			rotation="0 33.62 0"
+			scale="0.4 0.4 0.4"
+			shadow="receive: false"
+			animation-mixer="timeScale: 2"></a-entity>
+
+			<a-entity
+			id="sumowrestler2"
+			class="clear"
+			gltf-model="#sumowrestler2-gltf"
+			position="-1.512 0.722 0.041"
+			rotation="0 59.705 0"
+			scale="0.4 0.4 0.4"
+			shadow="receive: false"
+			animation-mixer="timeScale: 2"></a-entity>
+
+			<a-entity
+			id="sumowrestler3"
+			class="clear"
+			gltf-model="#sumowrestler3-gltf"
+			position="-0.314 0.746 -0.041"
+			rotation="0 20.351 0"
+			scale="0.4 0.4 0.4"
+			shadow="receive: false"
+			animation-mixer="timeScale: 2"></a-entity>
+
+			<a-entity
+			id="waitress"
+			class="clear"
+			gltf-model="#waitress-gltf"
+			position="-6.626 0 -4.613"
+			rotation="0 35.834 0"
+			shadow="receive: false"
+			animation-mixer="timeScale: 3"></a-entity>
+
+			<a-entity
+			id="chef"
+			class="clear"
+			gltf-model="#chef-gltf"
+			position="-6.8 2.8 -7"
+			shadow="receive: false"
+			animation-mixer="timeScale: 2"></a-entity>
+
+			<a-entity
+			id="teleporter1"
+			class="raycasterclick clear"
+			gltf-model="#teleporter-gltf"
+			position="0 0 2.6"
+			teleporter-highlighter
+			teleporter-selector="rotation: 0 0 0"></a-entity>
+
+			<a-entity
+			id="teleporter2"
+			class="raycasterclick clear"
+			gltf-model="#teleporter-gltf"
+			position="-6.5 2.8 -5.5"
+			teleporter-highlighter
+			teleporter-selector="rotation: 0 310 0; textTarget: #text1;"></a-entity>
+
+			<a-entity
+			id="teleporter3"
+			class="raycasterclick clear"
+			gltf-model="#teleporter-gltf"
+			position="-5.5 0 -3.5"
+			teleporter-highlighter
+			teleporter-selector="rotation: 0 0 0; textTarget: #text2;"></a-entity>
+
+			<a-entity 
+			id="text1"
+			class="clear"
+			position="-5.9 4.38 -7"
+			text="value: Ichita Yasumi supped my sour soup from a vase; color: #000;"
+			visible="false"></a-entity>
+
+			<a-entity 
+			id="text2"
+			class="clear"
+			position="-5.6 1.44 -4.613"
+			text="value: Ichita Yasumi sat at table four with his client; color: #000;"
+			visible="false"></a-entity>
+
+			<a-entity
+			id="stage"
+			gltf-model="#stage-gltf"
+			shadow="cast: false"></a-entity>
+
+			<a-entity 
+			id="track"
+			sound="src: url(assets/oyr_track.mp3); positional: false; volume: 0.3;"
+			sound-orchestrator="delay: 4000;"
+			scene-clearer="event: sound-ended"></a-entity>
+
+			<a-entity id="rig" position="0 0 2.6">
+				<a-entity id="camera" camera look-controls position="0 1.6 0">
+					<a-cursor id="cursor" raycaster="objects: .raycasterclick" material="color: red"></a-cursor>
+				</a-entity>
+				<a-entity laser-controls="hand: left" raycaster="objects: .raycasterclick; lineColor: red;"></a-entity>
+			</a-entity>
+
+			<a-entity light="type: ambient; intensity: 0.1;"></a-entity>
+			<a-entity light="type: point; castShadow: true; color: #FFFF80; intensity: 0.4; distance: 50; decay: 2;" position="-1 2 -.248"></a-entity>
+			<a-entity light="type: point; castShadow: true; color: #FFFF80; intensity: 0.4; distance: 50; decay: 2;" position="-7.575 5.583 -2.454"></a-entity>
+
+			<a-sky id="sky" color="#DBDBDB"></a-sky>
+		</a-scene>
+
+	</body>
+</html>
