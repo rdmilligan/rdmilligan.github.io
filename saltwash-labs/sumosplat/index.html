@@ -1,0 +1,526 @@
+<html>
+	<head>
+		<title>SaltwashVR</title>
+		
+		<script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+	</head>
+	<body>
+
+		<script>
+			// remove cursor
+			AFRAME.registerComponent('cursor-remover', {
+			  init: function () {
+				const sceneEl = this.el;
+				const elCursor = document.querySelector('#cursor');
+
+				sceneEl.addEventListener('enter-vr', function () {
+				   elCursor.parentNode.removeChild(elCursor);
+				});
+			  }
+			});
+
+			// select jukebox
+			AFRAME.registerComponent('jukebox-selector', {
+				init: function () {
+					const el = this.el;
+					const elDudeSpeech = document.querySelector('#dudespeech');
+					const elTrack = document.querySelector('#track');
+
+					el.addEventListener('click', function () {
+						if (!el.is('active')) {
+							el.addState('active');
+							elDudeSpeech.components.sound.playSound();
+							elTrack.components.sound.playSound();
+						} else {
+							el.removeState('active');
+							elDudeSpeech.components.sound.stopSound();
+							elTrack.components.sound.stopSound();
+						}
+					});
+				}
+			});
+
+			// highlight model
+			AFRAME.registerComponent('model-highlighter', {
+				schema: {
+					ignoreActiveState: {type: 'boolean'}
+				},
+
+				init: function () {
+					const el = this.el;
+					const data = this.data;
+					const scaleFactor = el.getAttribute('scale').x;
+					const scaleAdjustment = scaleFactor * 2;
+
+					el.addEventListener('mouseenter', function () {
+						if (data.ignoreActiveState || !el.is('active')) {
+							el.setAttribute('scale', { x: scaleAdjustment, y: scaleAdjustment, z: scaleAdjustment });
+						}
+					});
+
+					el.addEventListener('mouseleave', function () {
+						el.setAttribute('scale', {x: scaleFactor, y: scaleFactor, z: scaleFactor});
+					});
+				}
+			});
+
+			// select spinner
+			AFRAME.registerComponent('spinner-selector', {
+				schema: {
+					level: {type: 'number'}
+				},
+
+				init: function () {
+					const el = this.el;
+					const sceneEl = this.el.sceneEl;
+					const data = this.data;
+					const elWelcomeText = document.querySelector('#welcometext');
+					const elConqueredText = document.querySelector('#conqueredtext');
+					const elSlayeredText = document.querySelector('#slayeredtext');
+					const elSumo1 = document.querySelector('#sumo1');
+					const elSumo2 = document.querySelector('#sumo2');
+					const elSumo3 = document.querySelector('#sumo3');
+					const elSplat1 = document.querySelector('#splat1');
+					const elSplat2 = document.querySelector('#splat2');
+					const elSplat3 = document.querySelector('#splat3');
+					const elSquasher1 = document.querySelector('#squasher1');
+					const elSquasher2 = document.querySelector('#squasher2');
+					const elSquasher3 = document.querySelector('#squasher3');
+					const elSpinner1 = document.querySelector('#spinner1');
+					const elSpinner2 = document.querySelector('#spinner2');
+					const elSpinner3 = document.querySelector('#spinner3');
+					const elJukebox = document.querySelector('#jukebox');
+					const elDude = document.querySelector('#dude');
+
+					el.addEventListener('animationcomplete', function() {
+						el.removeState('active');
+					});
+
+					el.addEventListener('click', function () {
+						if (!el.is('active') && !elConqueredText.getAttribute('text-printer')) {
+
+							if (data.level === 1) {
+								elSumo1.setAttribute('animation__position', 'property: position; from: -5.5 0 -9.5; to: -5.5 0 -2; dur: 12000; easing: linear;');
+								elSumo2.setAttribute('animation__position', 'property: position; from: -2.5 0 -9.5; to: -2.5 0 -2; dur: 12000; easing: linear;');
+								elSumo3.setAttribute('animation__position', 'property: position; from: 6.5 0 -9.5; to: 6.5 0 -2; dur: 12000; easing: linear;');
+								elSquasher1.setAttribute('position', { x: -5.5, y: 3, z: -4.5 });
+								elSquasher2.setAttribute('position', { x: -2.5, y: 3, z: -4.5 });
+								elSquasher3.setAttribute('position', { x: 6.5, y: 3, z: -4.5 });
+								elSquasher1.setAttribute('visible', true);
+								elSquasher2.setAttribute('visible', true);
+								elSquasher3.setAttribute('visible', true);
+								elSpinner1.setAttribute('position', { x: -3, y: -100, z: -10 });
+								elSpinner2.setAttribute('animation__position', 'property: position; from: -3 -8 -10; to: -3 2 -10; dur: 15000; easing: linear;');
+								elSpinner2.setAttribute('animation__rotation', 'property: rotation; from: 0 0 1200; to: 0 0 0; dur: 15000; easing: linear;');
+								elSpinner3.setAttribute('animation__position', 'property: position; from: 3 -8 -10; to: 3 2 -10; dur: 15000; easing: linear;');
+								elSpinner3.setAttribute('animation__rotation', 'property: rotation; from: 0 0 1200; to: 0 0 0; dur: 15000; easing: linear;');
+								elSpinner2.setAttribute('visible', true);
+								elSpinner3.setAttribute('visible', true);
+								elSpinner2.addState('active');
+								elSpinner3.addState('active');
+								elWelcomeText.setAttribute('position', { x: 0, y: -100, z: 1.5 });
+								elJukebox.setAttribute('position', { x: 3, y: -100, z: -10 });
+								sceneEl.setAttribute('score', 0);
+							}
+							else if (data.level === 2) {
+								elSumo1.setAttribute('animation__position', 'property: position; from: -4.5 0 -9.5; to: -4.5 0 -2; dur: 11000; easing: linear;');
+								elSumo2.setAttribute('animation__position', 'property: position; from: -3.5 0 -9.5; to: -3.5 0 -2; dur: 11000; easing: linear;');
+								elSumo3.setAttribute('animation__position', 'property: position; from: 5.5 0 -8.5; to: 5.5 0 -2; dur: 11000; easing: linear;');
+								elSquasher1.setAttribute('position', { x: -4.5, y: 3, z: -3.5});
+								elSquasher2.setAttribute('position', { x: -3.5, y: 3, z: -4.5});
+								elSquasher3.setAttribute('position', { x: 5.5, y: 3, z: -4.5});
+							}
+							else if (data.level === 3) {
+								elSumo1.setAttribute('animation__position', 'property: position; from: -6.5 0 -8.5; to: -6.5 0 -2; dur: 10000; easing: linear;');
+								elSumo2.setAttribute('animation__position', 'property: position; from: -5.5 0 -9.5; to: -5.5 0 -2; dur: 10000; easing: linear;');
+								elSumo3.setAttribute('animation__position', 'property: position; from: 4.5 0 -9.5; to: 4.5 0 -2; dur: 10000; easing: linear;');
+								elSquasher1.setAttribute('position', { x: -6.5, y: 3, z: -4.5});
+								elSquasher2.setAttribute('position', { x: -5.5, y: 3, z: -4.5});
+								elSquasher3.setAttribute('position', { x: 4.5, y: 4, z: -4.5});
+							}
+
+							if (data.level === 2 || data.level === 3) {
+								elSpinner2.setAttribute('position', { x: -3, y: -100, z: -10 });
+								elSpinner3.setAttribute('position', { x: 3, y: -100, z: -10 });
+
+								setTimeout(function() {
+									if (!elConqueredText.getAttribute('text-printer')) {
+										elSlayeredText.setAttribute('position', { x: 0, y: 2.1, z: 1.5 });
+										elSlayeredText.setAttribute('text-printer', '');
+										elDude.setAttribute('animation__rotation', 'property: rotation; from: 0 -180 0; to: 0 180 0; dur: 4000; easing: linear;');
+										sceneEl.removeAttribute('game-restarter');
+										sceneEl.setAttribute('game-restarter', '');
+									}
+								}, 12000);
+							}
+
+							elSumo1.setAttribute('visible', true);
+							elSumo2.setAttribute('visible', true);
+							elSumo3.setAttribute('visible', true);
+							elSplat1.setAttribute('visible', false);
+							elSplat2.setAttribute('visible', false);
+							elSplat3.setAttribute('visible', false);
+							elSquasher1.removeState('active');
+							elSquasher2.removeState('active');
+							elSquasher3.removeState('active');
+						}
+					});
+				}
+			});
+
+			// shoot squasher
+			AFRAME.registerComponent('squasher-shooter', {
+				init: function () {
+					const el = this.el;
+					const elPosition = el.getAttribute('position');
+					const scaleFactor = el.getAttribute('scale').x;
+					const scaleAdjustment = scaleFactor / 2;
+
+					el.addEventListener('click', function () {
+						if (!el.is('active')) {
+							el.addState('active');
+							el.setAttribute('scale', { x: scaleAdjustment, y: scaleAdjustment, z: scaleAdjustment });
+							el.setAttribute('animation__position', `property: position; from: ${elPosition.x} ${elPosition.y} ${elPosition.z}; to: ${elPosition.x} 0 ${elPosition.z}; dur: 3000; easing: linear;`);
+						}
+					});
+				}
+			});
+
+			// collide squasher
+			AFRAME.registerComponent('squasher-collider', {
+				schema: {
+					sumoTarget: {type: 'selector'},
+					splatTarget: {type: 'selector'}
+				},
+
+				tick: function (time, timeDelta) {
+					const el = this.el;
+					const sceneEl = this.el.sceneEl;
+					const data = this.data;
+
+					if (el.is('active') && data.sumoTarget.getAttribute('visible') && data.sumoTarget.getAttribute('animation__position')) {
+						const elPosition = el.getAttribute('position');
+						const elSumoPosition = data.sumoTarget.getAttribute('position');
+						const proximityPositionZ = elPosition.z - elSumoPosition.z;
+
+						if (proximityPositionZ > -0.5 && proximityPositionZ < 0.5) {
+							if (elPosition.y > 0 && elPosition.y < 0.75) {
+								const elSplat = data.splatTarget;
+								const elSplatEffect = document.querySelector('#splateffect');
+
+								elSplat.setAttribute('position', { x: elSumoPosition.x, y: 0.05, z: elSumoPosition.z});
+								elSplat.setAttribute('visible', true);
+								elSplatEffect.setAttribute('position', { x: elSumoPosition.x, y: 0.4, z: elSumoPosition.z});
+								elSplatEffect.components.sound.playSound();
+								data.sumoTarget.setAttribute('visible', false);
+								sceneEl.setAttribute('score', parseInt(sceneEl.getAttribute('score')) + 20);
+							}
+							else if (elPosition.y === 0) {
+								data.sumoTarget.removeAttribute('animation__position');
+								sceneEl.setAttribute('score', parseInt(sceneEl.getAttribute('score')) + 10);
+							}
+						}
+					}
+				}
+			});
+
+			// conquer sumo
+			AFRAME.registerComponent('sumo-conqueror', {
+				init: function () {
+					const el = this.el;
+					const sceneEl = this.el.sceneEl;
+					const elConqueredText = document.querySelector('#conqueredtext');
+
+					el.addEventListener('animationcomplete', function() {
+						if (el.getAttribute('visible') && !elConqueredText.getAttribute('text-printer')) {
+							elConqueredText.setAttribute('position', { x: 0, y: 2.1, z: 1.5 });
+							elConqueredText.setAttribute('text-printer', '');
+
+							const elSpinners = sceneEl.querySelectorAll('.clearSpinner');
+							for (let i = 0; i < elSpinners.length; i++) {
+								const elPosition = elSpinners[i].getAttribute('position')
+								elSpinners[i].removeAttribute('animation__position');
+								elSpinners[i].setAttribute('position', { x: elPosition.x, y: -100, z: elPosition.z });
+							}
+
+							sceneEl.removeAttribute('game-restarter');
+							sceneEl.setAttribute('game-restarter', '');
+						}
+					});
+				}
+			});
+
+			// print text
+			AFRAME.registerComponent('text-printer', {
+				init: function () {
+					const el = this.el;
+					const sceneEl = this.el.sceneEl;
+					const previousTextValue = el.getAttribute('text').value;
+					const textValue = previousTextValue.substr(0, previousTextValue.indexOf(':') + 1) + ` ${sceneEl.getAttribute('score')}`;
+					let textPosition = 0;
+
+					const interval = setInterval(function() {
+						if (textPosition === textValue.length) {
+							clearInterval(interval);
+						}              
+
+						textPosition++;
+						el.setAttribute('text', {value: textValue.substring(0, textPosition)});
+						el.setAttribute('visible', true);
+					}, 100);
+				}
+			});
+
+			// restart game
+			AFRAME.registerComponent('game-restarter', {
+				init: function () {
+					const elWelcomeText = document.querySelector('#welcometext');
+					const elConqueredText = document.querySelector('#conqueredtext');
+					const elSlayeredText = document.querySelector('#slayeredtext');
+					const elSumo1 = document.querySelector('#sumo1');
+					const elSumo2 = document.querySelector('#sumo2');
+					const elSumo3 = document.querySelector('#sumo3');
+					const elSplat1 = document.querySelector('#splat1');
+					const elSplat2 = document.querySelector('#splat2');
+					const elSplat3 = document.querySelector('#splat3');
+					const elSquasher1 = document.querySelector('#squasher1');
+					const elSquasher2 = document.querySelector('#squasher2');
+					const elSquasher3 = document.querySelector('#squasher3');
+					const elSpinner1 = document.querySelector('#spinner1');
+					const elSpinner2 = document.querySelector('#spinner2');
+					const elSpinner3 = document.querySelector('#spinner3');
+					const elJukebox = document.querySelector('#jukebox');
+					const elDude = document.querySelector('#dude');
+
+					setTimeout(function() {
+						elWelcomeText.setAttribute('position', { x: 0, y: 2.1, z: 1.5 });
+						elConqueredText.setAttribute('position', { x: 0, y: -100, z: 1.5 });
+						elConqueredText.setAttribute('visible', false);
+						elConqueredText.removeAttribute('text-printer');
+						elSlayeredText.setAttribute('position', { x: 0, y: -100, z: 1.5 });
+						elSlayeredText.setAttribute('visible', false);
+						elSlayeredText.removeAttribute('text-printer');
+						elSumo1.removeAttribute('animation__position');
+						elSumo2.removeAttribute('animation__position');
+						elSumo3.removeAttribute('animation__position');
+						elSumo1.setAttribute('visible', false);
+						elSumo2.setAttribute('visible', false);
+						elSumo3.setAttribute('visible', false);
+						elSplat1.setAttribute('visible', false);
+						elSplat2.setAttribute('visible', false);
+						elSplat3.setAttribute('visible', false);
+						elSquasher1.setAttribute('position', { x: -5.5, y: -100, z: -4.5 });
+						elSquasher2.setAttribute('position', { x: -2.5, y: -100, z: -4.5 });
+						elSquasher3.setAttribute('position', { x: 6.5, y: -100, z: -4.5 });
+						elSquasher1.removeAttribute('animation__position');
+						elSquasher2.removeAttribute('animation__position');
+						elSquasher3.removeAttribute('animation__position');
+						elSquasher1.removeState('active');
+						elSquasher2.removeState('active');
+						elSquasher3.removeState('active');
+						elSpinner1.setAttribute('position', { x: -3, y: 2, z: -10 });
+						elSpinner2.removeAttribute('animation__position');
+						elSpinner2.removeAttribute('animation__rotation');
+						elSpinner3.removeAttribute('animation__position');
+						elSpinner3.removeAttribute('animation__rotation');
+						elJukebox.setAttribute('position', { x: 3, y: 0, z: -10 });
+						elDude.removeAttribute('animation__rotation');
+					}, 8000);
+				}
+			});
+		</script>
+
+		<a-scene renderer="colorManagement: true;" cursor-remover>
+			<a-assets>
+				<a-asset-item id="dude-gltf" src="assets/dude.gltf"></a-asset-item>
+				<a-asset-item id="sumo1-gltf" src="assets/sumo1.gltf"></a-asset-item>
+				<a-asset-item id="sumo2-gltf" src="assets/sumo2.gltf"></a-asset-item>
+				<a-asset-item id="sumo3-gltf" src="assets/sumo3.gltf"></a-asset-item>
+				<a-asset-item id="squasher1-gltf" src="assets/squasher1.gltf"></a-asset-item>
+				<a-asset-item id="squasher2-gltf" src="assets/squasher2.gltf"></a-asset-item>
+				<a-asset-item id="squasher3-gltf" src="assets/squasher3.gltf"></a-asset-item>
+				<a-asset-item id="splat-gltf" src="assets/splat.gltf"></a-asset-item>
+				<a-asset-item id="spinner-gltf" src="assets/spinner.gltf"></a-asset-item>
+				<a-asset-item id="jukebox-gltf" src="assets/jukebox.gltf"></a-asset-item>
+				<a-asset-item id="stage-gltf" src="assets/stage.gltf"></a-asset-item>
+			</a-assets>
+
+			<a-entity 
+			id="dude"
+			gltf-model="#dude-gltf"
+			rotation="0 180 0"
+			scale="2.9 2.9 2.9"
+			shadow="receive: false"
+			animation-mixer="timeScale: 1.2"></a-entity>
+
+			<a-entity
+			id="dudespeech"
+			position="0 1.415 0"
+			sound="src: url(assets/dudespeech.mp3); loop: true;"></a-entity>
+
+			<a-entity
+			id="sumo1"
+			gltf-model="#sumo1-gltf"
+			rotation="0 30 0"
+			scale="0.7 0.7 0.7"
+			shadow="receive: false"
+			animation-mixer="timeScale: 10"
+			sumo-conqueror
+			visible="false"></a-entity>
+
+			<a-entity
+			id="sumo2"
+			gltf-model="#sumo2-gltf"
+			rotation="0 60 0"
+			scale="0.7 0.7 0.7"
+			shadow="receive: false"
+			animation-mixer="timeScale: 10"
+			sumo-conqueror
+			visible="false"></a-entity>
+
+			<a-entity
+			id="sumo3"
+			gltf-model="#sumo3-gltf"
+			rotation="0 -40 0"
+			scale="0.7 0.7 0.7"
+			shadow="receive: false"
+			animation-mixer="timeScale: 10"
+			sumo-conqueror
+			visible="false"></a-entity>
+
+			<a-entity
+			id="splat1"
+			gltf-model="#splat-gltf"
+			scale="0.7 0.7 0.7"
+			shadow="receive: false"
+			visible="false"></a-entity>
+
+			<a-entity
+			id="splat2"
+			gltf-model="#splat-gltf"
+			rotation="0 90 0"
+			scale="0.7 0.7 0.7"
+			shadow="receive: false"
+			visible="false"></a-entity>
+
+			<a-entity
+			id="splat3"
+			gltf-model="#splat-gltf"
+			rotation="0 180 0"
+			scale="0.7 0.7 0.7"
+			shadow="receive: false"
+			visible="false"></a-entity>
+
+			<a-entity
+			id="splateffect"
+			sound="src: url(assets/splateffect.mp3);"></a-entity>
+
+			<a-entity
+			id="squasher1"
+			class="raycasterclick"
+			gltf-model="#squasher1-gltf"
+			shadow="receive: false"
+			model-highlighter="ignoreActiveState: false"
+			squasher-shooter
+			squasher-collider="sumoTarget: #sumo1; splatTarget: #splat1"
+			visible="false"></a-entity>
+
+			<a-entity
+			id="squasher2"
+			class="raycasterclick"
+			gltf-model="#squasher2-gltf"
+			scale="2 2 2"
+			shadow="receive: false"
+			model-highlighter="ignoreActiveState: false"
+			squasher-shooter
+			squasher-collider="sumoTarget: #sumo2; splatTarget: #splat2"
+			visible="false"></a-entity>
+
+			<a-entity
+			id="squasher3"
+			class="raycasterclick"
+			gltf-model="#squasher3-gltf"
+			scale="0.4 0.4 0.4"
+			shadow="receive: false"
+			model-highlighter="ignoreActiveState: false"
+			squasher-shooter
+			squasher-collider="sumoTarget: #sumo3; splatTarget: #splat3"
+			visible="false"></a-entity>
+
+			<a-entity
+			id="spinner1"
+			class="raycasterclick"
+			gltf-model="#spinner-gltf"
+			position="-3 2 -10"
+			model-highlighter="ignoreActiveState: false"
+			spinner-selector="level: 1"></a-entity>
+
+			<a-entity
+			id="spinner2"
+			class="raycasterclick clearSpinner"
+			gltf-model="#spinner-gltf"
+			position="-3 -100 -10"
+			model-highlighter="ignoreActiveState: false"
+			spinner-selector="level: 2"
+			visible="false"></a-entity>
+
+			<a-entity
+			id="spinner3"
+			class="raycasterclick clearSpinner"
+			gltf-model="#spinner-gltf"
+			position="3 -100 -10"
+			model-highlighter="ignoreActiveState: false"
+			spinner-selector="level: 3"
+			visible="false"></a-entity>
+
+			<a-entity
+			id="jukebox"
+			class="raycasterclick"
+			gltf-model="#jukebox-gltf"
+			position="3 0 -10"
+			scale="0.6 0.6 0.6"
+			model-highlighter="ignoreActiveState: true"
+			jukebox-selector></a-entity>
+
+			<a-entity 
+			id="welcometext"
+			position="0 2.1 1.5"
+			text="value: To play in browser, pan cursor and click a wheel. To play in VR, use your lasers. Splat or block our sumos by dropping objects. If you want some Saltwash VR sounds, hit the jukebox!; color: black;"></a-entity>
+
+			<a-entity 
+			id="conqueredtext"
+			position="0 2.1 1.5"
+			text="value: Our sumos have conquered you! Your score is:; color: red;"
+			visible="false"></a-entity>
+
+			<a-entity 
+			id="slayeredtext"
+			position="0 2.1 1.5"
+			text="value: You have splatted our sumos! Your score is:; color: green;"
+			visible="false"></a-entity>
+
+			<a-entity
+			id="stage"
+			gltf-model="#stage-gltf"
+			shadow="cast: false"></a-entity>
+
+			<a-entity 
+			id="track"
+			sound="src: url(assets/track.mp3); positional: false; volume: 0.3; loop: true;"></a-entity>
+
+			<a-entity id="rig" position="0 0 2.6">
+				<a-entity id="camera" camera look-controls position="0 1.6 0">
+					<a-cursor id="cursor" raycaster="objects: .raycasterclick" material="color: red"></a-cursor>
+				</a-entity>
+				<a-entity laser-controls raycaster="objects: .raycasterclick; lineColor: red;"></a-entity>
+			</a-entity>
+
+			<a-entity light="type: ambient; intensity: 0.1;"></a-entity>
+			<a-entity light="type: point; castShadow: true; intensity: 0.4; distance: 50; decay: 2" position="-1 2 2"></a-entity>
+
+			<a-sky id="sky" color="#DBDBDB"></a-sky>
+		</a-scene>
+
+	</body>
+</html>
