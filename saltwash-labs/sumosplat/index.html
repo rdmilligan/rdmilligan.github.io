@@ -92,6 +92,8 @@
 					const elSpinner3 = document.querySelector('#spinner3');
 					const elSpinner4 = document.querySelector('#spinner4');
 					const elSpinner5 = document.querySelector('#spinner5');
+					const elSpinner6 = document.querySelector('#spinner6');
+					const elSpinner7 = document.querySelector('#spinner7');
 					const elJukebox = document.querySelector('#jukebox');
 					const elDude = document.querySelector('#dude');
 
@@ -100,7 +102,7 @@
 					});
 
 					el.addEventListener('click', function () {
-						if (!el.is('active') && !elConqueredText.getAttribute('text-printer')) {
+						if (!el.is('active')) {
 
 							if (data.level === 1) {
 								elSumo1.setAttribute('animation__position', 'property: position; from: -5.5 0 -9.5; to: -5.5 0 -2; dur: 12000; easing: linear;');
@@ -174,16 +176,52 @@
 								
 								elSpinner4.setAttribute('position', { x: -3, y: -100, z: -10 });
 								elSpinner5.setAttribute('position', { x: 3, y: -100, z: -10 });
+								elSpinner6.setAttribute('animation__position', 'property: position; from: -3 -8 -10; to: -3 2 -10; dur: 13000; easing: linear;');
+								elSpinner6.setAttribute('animation__rotation', 'property: rotation; from: 0 0 1200; to: 0 0 0; dur: 13000; easing: linear;');
+								elSpinner7.setAttribute('animation__position', 'property: position; from: 3 -8 -10; to: 3 2 -10; dur: 13000; easing: linear;');
+								elSpinner7.setAttribute('animation__rotation', 'property: rotation; from: 0 0 1200; to: 0 0 0; dur: 13000; easing: linear;');
+								elSpinner6.setAttribute('visible', true);
+								elSpinner7.setAttribute('visible', true);
+								elSpinner6.addState('active');
+								elSpinner7.addState('active');
+							}
+							else if (data.level === 6 || data.level === 7) {
+								if (data.level === 6) {
+									elSumo1.setAttribute('animation__position', 'property: position; from: -4.5 0 -9.5; to: -4.5 0 -2; dur: 10500; easing: linear;');
+									elSumo2.setAttribute('animation__position', 'property: position; from: -3.5 0 -8.5; to: -3.5 0 -2; dur: 10500; easing: linear;');
+									elSumo3.setAttribute('animation__position', 'property: position; from: 5.5 0 -9.5; to: 5.5 0 -2; dur: 10500; easing: linear;');
+									elSquasher1.setAttribute('position', { x: -4.5, y: 3, z: -4.5});
+									elSquasher2.setAttribute('position', { x: -3.5, y: 4, z: -3.5});
+									elSquasher3.setAttribute('position', { x: 5.5, y: 5, z: -4.5});
+								}
+								else {
+									elSumo1.setAttribute('animation__position', 'property: position; from: -7.5 0 -9.5; to: -7.5 0 -2; dur: 10000; easing: linear;');
+									elSumo2.setAttribute('animation__position', 'property: position; from: 5.5 0 -8.5; to: 5.5 0 -2; dur: 10000; easing: linear;');
+									elSumo3.setAttribute('animation__position', 'property: position; from: 6.5 0 -9.5; to: 6.5 0 -2; dur: 10000; easing: linear;');
+									elSquasher1.setAttribute('position', { x: -7.5, y: 4, z: -4.5});
+									elSquasher2.setAttribute('position', { x: 5.5, y: 3, z: -4.5});
+									elSquasher3.setAttribute('position', { x: 6.5, y: 4, z: -3.5});
+								}
+								
+								elSpinner6.setAttribute('position', { x: -3, y: -100, z: -10 });
+								elSpinner7.setAttribute('position', { x: 3, y: -100, z: -10 });
 
 								setTimeout(function() {
 									if (!elConqueredText.getAttribute('text-printer')) {
 										elSlayeredText.setAttribute('position', { x: 0, y: 2.1, z: 1.5 });
 										elSlayeredText.setAttribute('text-printer', '');
 										elDude.setAttribute('animation__rotation', 'property: rotation; from: 0 -180 0; to: 0 180 0; dur: 4000; easing: linear;');
+			
+										const elSpinners = sceneEl.querySelectorAll('.clearSpinner');
+										for (let i = 0; i < elSpinners.length; i++) {
+											elSpinners[i].removeAttribute('animation__position');
+											elSpinners[i].removeAttribute('animation__rotation');
+										}
+
 										sceneEl.removeAttribute('game-restarter');
 										sceneEl.setAttribute('game-restarter', '');
 									}
-								}, 12000);
+								}, 13500);
 							}
 
 							elSumo1.setAttribute('visible', true);
@@ -267,7 +305,7 @@
 					const elConqueredText = document.querySelector('#conqueredtext');
 
 					el.addEventListener('animationcomplete', function() {
-						if (el.getAttribute('visible') && !elConqueredText.getAttribute('text-printer')) {
+						if (!elConqueredText.getAttribute('text-printer')) {
 							elConqueredText.setAttribute('position', { x: 0, y: 2.1, z: 1.5 });
 							elConqueredText.setAttribute('text-printer', '');
 
@@ -275,6 +313,7 @@
 							for (let i = 0; i < elSpinners.length; i++) {
 								const elPosition = elSpinners[i].getAttribute('position')
 								elSpinners[i].removeAttribute('animation__position');
+								elSpinners[i].removeAttribute('animation__rotation');
 								elSpinners[i].setAttribute('position', { x: elPosition.x, y: -100, z: elPosition.z });
 							}
 
@@ -322,10 +361,6 @@
 					const elSquasher2 = document.querySelector('#squasher2');
 					const elSquasher3 = document.querySelector('#squasher3');
 					const elSpinner1 = document.querySelector('#spinner1');
-					const elSpinner2 = document.querySelector('#spinner2');
-					const elSpinner3 = document.querySelector('#spinner3');
-					const elSpinner4 = document.querySelector('#spinner4');
-					const elSpinner5 = document.querySelector('#spinner5');
 					const elJukebox = document.querySelector('#jukebox');
 					const elDude = document.querySelector('#dude');
 
@@ -346,6 +381,9 @@
 						elSplat1.setAttribute('visible', false);
 						elSplat2.setAttribute('visible', false);
 						elSplat3.setAttribute('visible', false);
+						elSquasher1.removeAttribute('animation__position');
+						elSquasher2.removeAttribute('animation__position');
+						elSquasher3.removeAttribute('animation__position');
 						elSquasher1.setAttribute('position', { x: -5.5, y: -100, z: -4.5 });
 						elSquasher2.setAttribute('position', { x: -2.5, y: -100, z: -4.5 });
 						elSquasher3.setAttribute('position', { x: 6.5, y: -100, z: -4.5 });
@@ -353,14 +391,6 @@
 						elSquasher2.removeState('active');
 						elSquasher3.removeState('active');
 						elSpinner1.setAttribute('position', { x: -3, y: 2, z: -10 });
-						elSpinner2.removeAttribute('animation__position');
-						elSpinner2.removeAttribute('animation__rotation');
-						elSpinner3.removeAttribute('animation__position');
-						elSpinner3.removeAttribute('animation__rotation');
-						elSpinner4.removeAttribute('animation__position');
-						elSpinner4.removeAttribute('animation__rotation');
-						elSpinner5.removeAttribute('animation__position');
-						elSpinner5.removeAttribute('animation__rotation');
 						elJukebox.setAttribute('position', { x: 3, y: 0, z: -10 });
 						elDude.removeAttribute('animation__rotation');
 					}, 8000);
@@ -527,6 +557,24 @@
 			position="3 -100 -10"
 			model-highlighter="ignoreActiveState: false"
 			spinner-selector="level: 5"
+			visible="false"></a-entity>
+
+			<a-entity
+			id="spinner6"
+			class="raycasterclick clearSpinner"
+			gltf-model="#spinner-gltf"
+			position="-3 -100 -10"
+			model-highlighter="ignoreActiveState: false"
+			spinner-selector="level: 6"
+			visible="false"></a-entity>
+
+			<a-entity
+			id="spinner7"
+			class="raycasterclick clearSpinner"
+			gltf-model="#spinner-gltf"
+			position="3 -100 -10"
+			model-highlighter="ignoreActiveState: false"
+			spinner-selector="level: 7"
 			visible="false"></a-entity>
 
 			<a-entity
