@@ -105,6 +105,7 @@
 								elSquasher1.setAttribute('visible', true);
 								elSquasher2.setAttribute('visible', true);
 								elSquasher3.setAttribute('visible', true);
+								elSpinner2.setAttribute('visible', true);
 								elWelcomeText.setAttribute('position', { x: 0, y: -100, z: 1.5 });
 								elJukebox.setAttribute('position', { x: 3, y: -100, z: -10 });
 								el.setAttribute('level', parseInt(el.getAttribute('level')) + 1);
@@ -202,8 +203,6 @@
 								elSpinner1.setAttribute('animation__rotation', 'property: rotation; from: 0 0 1200; to: 0 0 0; dur: 15000; easing: linear;');
 								elSpinner2.setAttribute('animation__position', 'property: position; from: 3 -8 -10; to: 3 2 -10; dur: 15000; easing: linear;');
 								elSpinner2.setAttribute('animation__rotation', 'property: rotation; from: 0 0 1200; to: 0 0 0; dur: 15000; easing: linear;');
-								elSpinner1.setAttribute('visible', true);
-								elSpinner2.setAttribute('visible', true);
 								elSpinner1.addState('active');
 								elSpinner2.addState('active');
 							}
@@ -250,10 +249,10 @@
 
 				tick: function (time, timeDelta) {
 					const el = this.el;
-					const sceneEl = this.el.sceneEl;
 					const data = this.data;
 
 					if (el.is('active') && data.sumoTarget.getAttribute('visible') && data.sumoTarget.getAttribute('animation__position')) {
+						const sceneEl = this.el.sceneEl;
 						const elPosition = el.getAttribute('position');
 						const elSumoPosition = data.sumoTarget.getAttribute('position');
 						const proximityPositionZ = elPosition.z - elSumoPosition.z;
